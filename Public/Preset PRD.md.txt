@@ -1,0 +1,212 @@
+# Preset Page PRD — Sports Statistical LLM
+
+## 1. Purpose
+The Preset Page is the **control center for repeatable analysis**.  
+It allows users to quickly **create, organize, understand, and run** saved statistical queries (“presets”) without retyping or rebuilding logic.
+
+Presets represent **stored QuerySpecs**, not free-form text.
+
+---
+
+## 2. Goals
+- Make preset creation **fast and intuitive**
+- Encourage experimentation through templates and duplication
+- Support power-user workflows (batch runs, comparisons)
+- Maintain transparency and trust (data freshness, last run status)
+
+---
+
+## 3. Non-Goals
+- No freeform QuerySpec editing (JSON)
+- No complex logic builder in MVP
+- No user management or permissions
+- No billing or usage analytics
+
+---
+
+## 4. User Stories (MVP)
+- As a user, I want to create a preset from a template instead of starting from scratch.
+- As a user, I want to duplicate an existing preset and tweak it.
+- As a user, I want to quickly run my most-used presets.
+- As a user, I want to understand what a preset does without running it.
+- As a user, I want to organize presets so I can find them later.
+
+---
+
+## 5. Page Layout & Navigation
+
+### Route
+`/presets`
+
+### Primary CTA
+**➕ New Preset**
+
+### Secondary Actions
+- Search presets
+- Toggle view: **Card View / Table View**
+- Filter by:
+  - League
+  - Preset type (Single / Comparison)
+  - Tags
+
+---
+
+## 6. Preset Creation Flow (MVP)
+
+### Entry Points
+- “Save as Preset” from:
+  - Query results
+  - Compare page
+  - Breakout or Cooldown page
+- “➕ New Preset” from Presets page
+
+### Creation Modal
+Tabs:
+1. **Templates**
+2. **From Scratch**
+
+#### Templates (MVP)
+- Win % vs Conference
+- Streak Tracker (e.g., 25+ points)
+- Breakout or Cooldown
+- Head-to-Head Comparison
+
+Selecting a template:
+- Pre-fills the preset configuration
+- User can adjust parameters
+- User names and saves
+
+#### From Scratch (MVP-lite)
+Step-based selection:
+1. League  
+2. Entity type (Player / Team)  
+3. Metric  
+4. Filters  
+5. Preview  
+6. Save  
+
+---
+
+## 7. Preset Display (Primary View)
+
+### Card View (Default)
+Each preset card shows:
+- Preset name
+- League badge
+- Preset type icon:
+  - Single
+  - Comparison
+  - Breakout/Cooldown
+- Key conditions (chips)
+- Last run timestamp
+- Status indicator:
+  - ✅ Healthy
+  - ⚠ Stale data
+  - ❌ Failed last run
+
+**Card Actions**
+- ▶ Run
+- ✏ Edit
+- 📄 Duplicate
+- 🗑 Delete
+- ⭐ Pin
+
+---
+
+### Table View (Optional Toggle)
+Columns:
+- Name
+- League
+- Type
+- Metric
+- Last Run
+- Actions
+
+---
+
+## 8. Organization & Discovery
+
+### Tags (MVP)
+- User-defined tags
+- Displayed as chips on cards
+- Click tag to filter presets
+
+### Pinned Presets
+- User can pin presets
+- Pinned presets appear at top
+- Limit: 5 pinned presets
+
+---
+
+## 9. Preset Preview (Hover / Click)
+Without running the preset, show:
+- Metric
+- Filters
+- Timeframe
+- Entity/entities involved
+- Last result snapshot (optional, cached)
+
+Purpose: help users remember intent before running.
+
+---
+
+## 10. Batch Operations (v1-ready, MVP-light)
+- Multi-select presets
+- “Run Selected” action
+- Results displayed as grouped report
+
+(MVP may limit to single-run; UI should anticipate expansion.)
+
+---
+
+## 11. Functional Requirements
+- Presets store executable **QuerySpecs**
+- Running a preset calls the same execution path as manual queries
+- All preset results must show:
+  - Sample size (N)
+  - Timeframe
+  - Filters applied
+- Presets must be idempotent and safe to re-run
+
+---
+
+## 12. Error & Edge States
+- Preset fails due to missing data → clear error message
+- Preset references deprecated metric → prompt to update
+- Data stale → warning badge, still runnable
+
+---
+
+## 13. Data Model (UI-facing)
+Each preset includes:
+- `presetId`
+- `name`
+- `league`
+- `type` (single / comparison)
+- `querySpec` or `comparisonSpec`
+- `tags`
+- `pinned`
+- `lastRunAt`
+- `lastRunStatus`
+
+---
+
+## 14. MVP Success Criteria
+- User can create a preset in under 30 seconds
+- User can rerun a preset in one click
+- User understands what a preset does without opening it
+- Presets are reused (not recreated)
+- Presets page becomes the primary workflow hub
+
+---
+
+## 15. v1 Expansion Hooks (Not MVP)
+- Preset folders
+- Scheduled presets
+- Shared presets
+- Preset dashboards
+
+---
+
+### One-line Summary
+> The Presets page is not a list—it is a **library of reusable analytical tools** that powers the entire product.

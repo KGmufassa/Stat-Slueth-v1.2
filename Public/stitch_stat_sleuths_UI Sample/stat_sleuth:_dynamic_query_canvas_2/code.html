@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stat Sleuth | Trend Scanner</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#4f46e5",
+                        "accent-blue": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#0a0c14",
+                        "surface-dark": "#131926",
+                        "border-dark": "#1e293b",
+                        "sidebar-bg": "#0d111a"
+                    },
+                    fontFamily: {
+                        display: "Lexend"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    }
+                }
+            }
+        };
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #232f48;
+            border-radius: 10px;
+        }
+        .trend-up {
+            @apply text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1;
+        }
+        .trend-down {
+            @apply text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="sticky top-0 z-50 w-full border-b border-solid border-white/10 bg-[#0a0c14] px-6 h-16 flex items-center shrink-0">
+<div class="w-full flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-accent-blue rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-xl">analytics</span>
+</div>
+<h1 class="text-white text-lg font-bold tracking-tight">Stat Sleuth</h1>
+</div>
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-slate-400 hover:text-white text-[13px] font-medium transition-colors" href="#">Sleuth Hound</a>
+<a class="text-slate-400 hover:text-white text-[13px] font-medium transition-colors" href="#">Players</a>
+<a class="text-slate-400 hover:text-white text-[13px] font-medium transition-colors" href="#">Teams</a>
+<div class="relative flex items-center h-16">
+<a class="text-white text-[13px] font-bold" href="#">Scanner</a>
+<div class="absolute bottom-0 left-0 right-0 h-[2px] bg-accent-blue"></div>
+</div>
+<a class="text-slate-400 hover:text-white text-[13px] font-medium transition-colors" href="#">Presets</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 text-lg">search</span>
+</div>
+<input class="bg-[#1e2330] border-none text-[13px] text-white placeholder-slate-400 rounded-lg pl-10 pr-4 py-2 w-[240px] focus:ring-1 focus:ring-accent-blue transition-all" placeholder="Ask anything..." type="text"/>
+</div>
+<div class="flex items-center gap-1">
+<button class="flex items-center justify-center rounded-lg size-9 text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg size-9 text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="size-8 rounded-full overflow-hidden ml-2 ring-1 ring-white/10">
+<img alt="User avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUCzz2q2x_wRBwjzEcKb_ieR17IrUe7Ru0zs9I-vcsWRLIHlmL7nmEEI0FWNgJfOvdOU94EiCyyR9gk-9_U8HMBV5Qm5izvzwpQr6n1Cr0HV55N1BLSXUsmoK-GZewBWHGwOovekLFal71p1PDwOpORAE4-AUsJhUsP5dkR-hE8X8sAkUj4Dj4aIiq3ZRsSU0ykQCbvHbEWw9Qd7Wi88LN3i1aY4R3QAcPpOJaN7QyaevxafcWx0opNzxteDo5bH7fUiO8BILVTfA"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-64 border-r border-white/10 bg-sidebar-bg flex flex-col shrink-0">
+<div class="p-6 flex-1 overflow-y-auto custom-scrollbar">
+<div class="mb-8">
+<h3 class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-4">Scanner Tools</h3>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors text-[13px]" href="#">
+<span class="material-symbols-outlined text-lg">add_circle</span>
+<span>New Scan</span>
+</a>
+<div class="space-y-1">
+<button class="w-full flex items-center justify-between px-3 py-2 bg-accent-blue/10 text-white rounded-lg text-[13px] font-medium">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-lg">folder_open</span>
+<span>Archive</span>
+</div>
+<span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+</button>
+<div class="pl-9 space-y-1 mt-1">
+<a class="block py-1.5 text-slate-500 hover:text-white text-[12px] transition-colors" href="#">Player Props</a>
+<a class="block py-1.5 text-slate-500 hover:text-white text-[12px] transition-colors" href="#">Team Trends</a>
+<a class="block py-1.5 text-slate-500 hover:text-white text-[12px] transition-colors" href="#">Saved Alerts</a>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-8">
+<h3 class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-4">Team Database</h3>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors text-[13px]" href="#">
+<span class="material-symbols-outlined text-lg">groups</span>
+<span>All Teams</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors text-[13px]" href="#">
+<span class="material-symbols-outlined text-lg">star</span>
+<span>Favorites</span>
+</a>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-white/5">
+<div class="bg-[#1a202c] rounded-xl p-4 border border-white/5">
+<h4 class="text-accent-blue font-bold text-[10px] uppercase tracking-wider mb-1">Stat Sleuth Pro</h4>
+<p class="text-[11px] text-slate-400 mb-3 leading-relaxed">Access real-time possession tracking and AI-driven scout notes.</p>
+<button class="w-full bg-[#5c67f2] hover:bg-[#4f59e5] text-white text-xs font-bold py-2 rounded-lg transition-colors">
+                    Upgrade Hub
+                </button>
+</div>
+</div>
+</aside>
+<main class="flex-1 overflow-y-auto custom-scrollbar bg-background-dark">
+<div class="max-w-7xl mx-auto px-8 py-8 space-y-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="text-3xl font-black text-white tracking-tight">Trend Scanner</h2>
+<p class="text-slate-500 text-sm mt-1">Identifying breakout and cooldown patterns across the league.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-accent-blue/10 text-accent-blue border border-accent-blue/20 px-5 py-2.5 rounded-lg font-bold text-xs hover:bg-accent-blue/20 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+<span>Run New Scan</span>
+</button>
+<button class="bg-surface-dark border border-border-dark text-white px-5 py-2.5 rounded-lg font-bold text-xs hover:bg-border-dark transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Save Scanner</span>
+</button>
+</div>
+</div>
+<section class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 bg-surface-dark border border-border-dark p-5 rounded-xl">
+<div class="flex flex-col gap-2">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Trend Type</label>
+<div class="flex p-1 bg-background-dark rounded-lg">
+<button class="flex-1 bg-accent-blue text-white text-xs font-bold py-1.5 rounded shadow-lg">Breakout</button>
+<button class="flex-1 text-slate-400 text-xs font-bold py-1.5 rounded hover:text-white">Cooldown</button>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Stat Type</label>
+<select class="bg-background-dark border-border-dark text-white text-xs font-bold rounded-lg h-10 focus:ring-accent-blue">
+<option>Points Per Game (PPG)</option>
+<option>Assists (APG)</option>
+<option>Rebounds (RPG)</option>
+<option>Three Pointers (3PM)</option>
+<option>True Shooting (TS%)</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Threshold (%)</label>
+<div class="relative">
+<input class="w-full bg-background-dark border-border-dark text-white text-xs font-bold rounded-lg h-10 pr-8" type="number" value="25"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] font-bold">%</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Streak (Games)</label>
+<div class="relative">
+<input class="w-full bg-background-dark border-border-dark text-white text-xs font-bold rounded-lg h-10" type="number" value="5"/>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 text-sm">calendar_today</span>
+</div>
+</div>
+<div class="flex items-end">
+<button class="w-full bg-slate-100 text-slate-900 h-10 rounded-lg font-bold text-xs hover:bg-white transition-all">Apply Filters</button>
+</div>
+</section>
+<div class="grid grid-cols-12 gap-6 pb-12">
+<div class="col-span-12 lg:col-span-8 space-y-6">
+<div class="bg-surface-dark border border-border-dark rounded-xl overflow-hidden">
+<div class="px-5 py-3 border-b border-border-dark flex items-center justify-between bg-white/5">
+<h3 class="text-white font-bold flex items-center gap-2 text-[11px] uppercase tracking-wide">
+<span class="material-symbols-outlined text-accent-blue text-base">compare_arrows</span>
+                                Head-to-Head Comparison
+                            </h3>
+<span class="text-slate-500 text-[9px] font-bold uppercase tracking-widest">Live Scan Data [N=20]</span>
+</div>
+<div class="px-6 py-6">
+<div class="flex items-center justify-between mb-6 max-w-xl mx-auto">
+<div class="flex items-center gap-3">
+<div class="size-14 rounded-full border-2 border-accent-blue/40 overflow-hidden shadow-lg p-0.5">
+<img alt="LeBron James" class="w-full h-full object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtkxM6dhsG0mnXJGL0-oGsUL2oYjl1qoCEv1zJj2MLdtUZwi_cjJljaKm6znqln-hz0urGpwtQAasoEvTuIc2Vy1ywdDAQh3DiItIWjW_zob2Zxvo7sngm8r98lQ8CjMIafRhk5dRS6BqgzxnwMgAIoN7Yr_hjkOfgwYFjCqzJzzERVwhVCuCwlnFRCzEcqMbVV_Qin-0IN_8qkqYyUAofXrmiLogkyCBz73aZVyf8mFpuZjgt954UrziCz21mwTkEonR-JBcm_O8"/>
+</div>
+<div>
+<h4 class="text-white font-bold text-lg leading-none">LeBron James</h4>
+<p class="text-slate-500 text-[10px] uppercase font-bold tracking-tighter mt-1">LAL | FORWARD</p>
+</div>
+</div>
+<div class="px-4 text-slate-700 font-black text-xl italic">VS</div>
+<div class="flex items-center gap-3 flex-row-reverse text-right">
+<div class="size-14 rounded-full border-2 border-slate-700/40 overflow-hidden shadow-lg p-0.5">
+<img alt="Kevin Durant" class="w-full h-full object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7DAP-0_ggB_Vsi2wvY7iU7xNRSoXnd43uJxfGlTL8FYQ2iJ55bioWXNGoY2n-0-12tjgOMFaTMA54FtPIDMRu631wTwlC9TwMNEBoqOoGx63TLuyW1dNTKk9HpoC7ch7_5J41fiOoZUITd-kRn_6sns9YLd0CTJURJSI6auwSa96P1jOxNyy3s-fNEUqq3yF-nUTrjfR1xYWQvgKi0haXH0CQ2POp6CG36cbzew0JxW3V19Mse2tiRDFeYUuMXsMkZo0lZSAk9cc"/>
+</div>
+<div>
+<h4 class="text-white font-bold text-lg leading-none">Kevin Durant</h4>
+<p class="text-slate-500 text-[10px] uppercase font-bold tracking-tighter mt-1">PHX | FORWARD</p>
+</div>
+</div>
+</div>
+<div class="space-y-4 max-w-xl mx-auto">
+<div class="relative">
+<div class="flex justify-between text-[11px] font-bold mb-1.5">
+<span class="text-slate-400">25.7</span>
+<span class="text-slate-400 uppercase tracking-widest">PPG</span>
+<span class="text-white">27.1</span>
+</div>
+<div class="h-1.5 flex bg-slate-800 rounded-full overflow-hidden">
+<div class="w-1/2 flex justify-end">
+<div class="w-[85%] bg-slate-600 h-full rounded-l-full"></div>
+</div>
+<div class="w-1/2">
+<div class="w-[95%] bg-accent-blue h-full rounded-r-full"></div>
+</div>
+</div>
+</div>
+<div class="relative">
+<div class="flex justify-between text-[11px] font-bold mb-1.5">
+<span class="text-white">54.2%</span>
+<span class="text-slate-400 uppercase tracking-widest">FG%</span>
+<span class="text-slate-400">52.8%</span>
+</div>
+<div class="h-1.5 flex bg-slate-800 rounded-full overflow-hidden">
+<div class="w-1/2 flex justify-end">
+<div class="w-[95%] bg-accent-blue h-full rounded-l-full"></div>
+</div>
+<div class="w-1/2">
+<div class="w-[88%] bg-slate-600 h-full rounded-r-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-xl overflow-hidden shadow-lg">
+<div class="px-5 py-3 border-b border-border-dark flex items-center justify-between bg-white/5">
+<h3 class="text-white font-bold text-[11px] uppercase tracking-wide">Ranked Scan Results</h3>
+<div class="flex gap-2">
+<span class="text-[10px] text-slate-500 font-bold uppercase">Sort By:</span>
+<select class="bg-transparent text-[10px] text-accent-blue font-bold border-none p-0 focus:ring-0 cursor-pointer">
+<option>Trend Velocity</option>
+<option>Raw Increase</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left text-xs">
+<thead>
+<tr class="bg-background-dark/50 text-slate-500 font-bold uppercase text-[9px] tracking-widest border-b border-border-dark">
+<th class="px-6 py-4">Player</th>
+<th class="px-6 py-4">Team</th>
+<th class="px-6 py-4">Current Avg</th>
+<th class="px-6 py-4">Season Avg</th>
+<th class="px-6 py-4">Velocity</th>
+<th class="px-6 py-4 text-right">Trend</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-dark">
+<tr class="hover:bg-accent-blue/5 transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full overflow-hidden bg-slate-800">
+<img alt="" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtkxM6dhsG0mnXJGL0-oGsUL2oYjl1qoCEv1zJj2MLdtUZwi_cjJljaKm6znqln-hz0urGpwtQAasoEvTuIc2Vy1ywdDAQh3DiItIWjW_zob2Zxvo7sngm8r98lQ8CjMIafRhk5dRS6BqgzxnwMgAIoN7Yr_hjkOfgwYFjCqzJzzERVwhVCuCwlnFRCzEcqMbVV_Qin-0IN_8qkqYyUAofXrmiLogkyCBz73aZVyf8mFpuZjgt954UrziCz21mwTkEonR-JBcm_O8"/>
+</div>
+<span class="font-bold text-white group-hover:text-accent-blue transition-colors">LeBron James</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-400">LAL</td>
+<td class="px-6 py-4 font-bold text-white">31.2</td>
+<td class="px-6 py-4 text-slate-400">25.7</td>
+<td class="px-6 py-4">
+<div class="w-20 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+<div class="w-[85%] h-full bg-emerald-500"></div>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="trend-up"><span class="material-symbols-outlined text-[12px]">trending_up</span> +21.4%</span>
+</td>
+</tr>
+<tr class="hover:bg-accent-blue/5 transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full overflow-hidden bg-slate-800">
+<img alt="" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9YyH3ahnjhbr0HgJMn65bRWMz9k2ppWx1EKsWkqSPMO1ssMf6vs6nUvkSm-QNJeSB7DnzdoXe7dNQqcfsVzs4iVwkwFrsWxbtdgidXmO6f7iKZGDYafFz3u6ORXG6imqr3vOid2nuJrmGrU5C_aT-GfRoiXhIi9O0dkhLx4Fcqynn5l1M6v7-FrLlcfaE2E50c6qxdhJ3t-KgoInDCDaVNzH93TxMA3x-WCKCDJb8C74lp6INSqRayYZLJGQWZMambX0EVzvgI1w"/>
+</div>
+<span class="font-bold text-white group-hover:text-accent-blue transition-colors">Kevin Durant</span>
+</div>
+</td>
+<td class="px-6 py-4 text-slate-400">PHX</td>
+<td class="px-6 py-4 font-bold text-white">28.9</td>
+<td class="px-6 py-4 text-slate-400">27.1</td>
+<td class="px-6 py-4">
+<div class="w-20 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+<div class="w-[45%] h-full bg-emerald-500"></div>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="trend-up"><span class="material-symbols-outlined text-[12px]">trending_up</span> +6.6%</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<div class="bg-accent-blue/5 border border-accent-blue/20 rounded-xl p-6">
+<h4 class="text-white font-bold text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-accent-blue text-base">analytics</span>
+                            Scan Summary
+                        </h4>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-dark border border-border-dark p-4 rounded-lg">
+<p class="text-slate-500 text-[9px] font-bold uppercase mb-1">Total Analyzed</p>
+<p class="text-white text-xl font-black">482</p>
+</div>
+<div class="bg-surface-dark border border-border-dark p-4 rounded-lg">
+<p class="text-slate-500 text-[9px] font-bold uppercase mb-1">Qualifiers</p>
+<p class="text-accent-blue text-xl font-black">12</p>
+</div>
+</div>
+<div class="mt-4 p-4 bg-background-dark/50 rounded-lg border border-border-dark">
+<p class="text-slate-400 text-[10px] italic leading-relaxed">Scan identified a 15% league-wide increase in 3P% over the last 5 game rolling average.</p>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-xl p-6">
+<h4 class="text-white font-bold text-xs uppercase tracking-widest mb-4">Saved Presets</h4>
+<div class="space-y-3">
+<button class="w-full flex items-center justify-between p-4 bg-background-dark/50 border border-border-dark rounded-lg hover:border-accent-blue transition-all group">
+<div class="text-left">
+<p class="text-white font-bold text-sm group-hover:text-accent-blue transition-colors">Hot Hands: Shooters</p>
+<p class="text-[10px] text-slate-500 uppercase mt-1">3PM &gt; 3.0 | 5 Games</p>
+</div>
+<span class="material-symbols-outlined text-slate-500 text-sm">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 bg-background-dark/50 border border-border-dark rounded-lg hover:border-accent-blue transition-all group">
+<div class="text-left">
+<p class="text-white font-bold text-sm group-hover:text-accent-blue transition-colors">Rookie Wall Check</p>
+<p class="text-[10px] text-slate-500 uppercase mt-1">Usage &lt; 20% | 10 Games</p>
+</div>
+<span class="material-symbols-outlined text-slate-500 text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#131926]/90 backdrop-blur-md border border-white/10 px-6 py-2.5 rounded-full shadow-2xl flex items-center gap-6 text-[10px] z-[60]">
+<div class="flex items-center gap-2 text-slate-400">
+<span class="size-2.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+<span class="font-bold tracking-wide uppercase">Scanning Engine Active</span>
+</div>
+<div class="w-px h-4 bg-white/10"></div>
+<div class="flex items-center gap-2 text-slate-400">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span class="font-bold">42ms Latency</span>
+</div>
+</div>
+
+</body></html>

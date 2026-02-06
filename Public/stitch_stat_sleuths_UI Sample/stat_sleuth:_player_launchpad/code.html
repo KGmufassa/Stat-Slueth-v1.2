@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stat Sleuth: Player Analytics Launchpad</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#0a0e17",
+                        "sidebar-dark": "#0d131f",
+                        "nav-dark": "#0d111a",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Lexend', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .nav-active-bar {
+            @apply relative after:content-[''] after:absolute after:-bottom-[13px] after:left-0 after:w-full after:h-[2px] after:bg-primary;
+        }
+        .sidebar-border-right {
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen">
+<header class="sticky top-0 z-50 w-full border-b border-solid border-slate-200 dark:border-white/5 bg-background-light dark:bg-nav-dark px-4 lg:px-6 py-3">
+<div class="max-w-[1440px] mx-auto flex items-center justify-between whitespace-nowrap">
+<div class="flex items-center gap-10">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-primary/10 rounded-md flex items-center justify-center text-primary">
+<span class="material-symbols-outlined font-bold">bar_chart</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">Stat Sleuth</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-white text-[13px] font-medium transition-colors" href="#">Sleuth Hound</a>
+<a class="text-slate-900 dark:text-white text-[13px] font-bold transition-colors nav-active-bar" href="#">Players</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-white text-[13px] font-medium transition-colors" href="#">Teams</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-white text-[13px] font-medium transition-colors" href="#">Scanner</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-white text-[13px] font-medium transition-colors" href="#">Presets</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex items-center bg-slate-100 dark:bg-[#192233] rounded-lg h-9 px-3 w-64 border border-transparent focus-within:border-primary/50">
+<span class="material-symbols-outlined text-[18px] text-slate-400 dark:text-[#92a4c9]">search</span>
+<input class="bg-transparent border-none text-slate-900 dark:text-white focus:ring-0 h-full w-full placeholder:text-slate-400 dark:placeholder:text-[#92a4c9] text-xs pl-2" placeholder="Ask anything..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+</button>
+<button class="flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-white/10 bg-slate-200 ml-1">
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTG4qjO7U4fuwT7y8-ciayNAiEi91XrYwHCHMHO3ehx2VJ5gwZMccpzX2ecN8xmpu1ZyzUgJNzgtA6D9N8249-2xM7IK3J4rdwpHeYmGbO9aFEelRN4BeWC4y5BLAgICDBkK9NtfMfGWYn2RtnAItBLbRclFpuCiq1SsdFGg5AdefulbWhPGOHRW0_KIM5zxYtlbOR8SmsHdMRQmt29inMe2xQFwnN33rNPZmADbFjoIt8fJhB9JqtxVhUzbsx-zFIbSIrCLOQRGI"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto flex min-h-[calc(100vh-60px)]">
+<aside class="w-64 hidden lg:flex flex-col sidebar-border-right bg-sidebar-dark pt-8 pb-6 px-4 shrink-0">
+<div class="flex-1 flex flex-col gap-8">
+<div>
+<h3 class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">Analysis Toolset</h3>
+<nav class="flex flex-col gap-0.5">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-white transition-all font-medium text-[13px]" href="#">
+<span class="material-symbols-outlined text-[18px] text-primary">bar_chart</span>
+                        Player Stats
+                    </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white transition-all font-medium text-[13px]" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-500">compare_arrows</span>
+                        Head-to-Head
+                    </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white transition-all font-medium text-[13px]" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-500">search_insights</span>
+                        Scouting Report
+                    </a>
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-400 hover:text-white transition-all font-medium text-[13px]" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[18px] text-slate-500">monitoring</span>
+                            Advanced Analytics
+                        </div>
+<span class="text-[9px] font-extrabold bg-primary/20 text-primary px-1.5 py-0.5 rounded uppercase tracking-wider">Pro</span>
+</a>
+</nav>
+</div>
+<div>
+<h3 class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">Team Database</h3>
+<nav class="flex flex-col gap-0.5">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white transition-all font-medium text-[13px]" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-500">groups</span>
+                        All Teams
+                    </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white transition-all font-medium text-[13px]" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-500">star</span>
+                        Favorites
+                    </a>
+</nav>
+</div>
+</div>
+<div class="mt-auto pt-6 border-t border-white/5">
+<div class="bg-primary/5 p-4 rounded-xl border border-primary/20">
+<h4 class="text-[11px] font-bold text-primary uppercase tracking-wider mb-2">Stat Sleuth Pro</h4>
+<p class="text-[11px] text-slate-400 leading-relaxed mb-4">Access real-time possession tracking and AI-driven scout notes.</p>
+<button class="w-full py-2 bg-primary hover:bg-blue-600 text-white text-[11px] font-bold rounded-lg transition-colors shadow-lg shadow-primary/20">
+                    Upgrade Hub
+                </button>
+</div>
+</div>
+</aside>
+<div class="flex-1 px-4 lg:px-10 py-8 space-y-8 min-w-0">
+<div class="flex flex-col @container">
+<div class="flex w-full flex-col gap-6 @[520px]:flex-row @[520px]:justify-between @[520px]:items-center bg-white dark:bg-[#111827] p-6 rounded-xl border border-slate-200 dark:border-[#1e2a44] shadow-sm">
+<div class="flex gap-6">
+<div class="relative group">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-xl min-h-32 w-32 shadow-lg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDb762hOqiz8Pd9XLw6yGDJ7aF-xV7548_oshurjFQdOC1dZ6Us74KneDs4efactWzbWl69q6eGACjxDtXhiEl8Ttjv3dxEdkB7VxRJY8uajCL3HZXNaaT__dz9eauyv6GRSGSYab7f3QK_Ay6MpeciFpREchq83g8jMYmr8eaOZfqekpoF4EIUlxi0FGgzaSZFx2d854nEq3NynR0sC6f4Z9Bs8dzwZsRvcBpOVsXsN9TwpRLG5YIBNIYOKZqr8jvCRYY-kdx-xGg");'></div>
+<div class="absolute -bottom-2 -right-2 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Active</div>
+</div>
+<div class="flex flex-col justify-center">
+<div class="flex items-center gap-3">
+<h1 class="text-slate-900 dark:text-white text-3xl font-extrabold leading-tight tracking-tight">LeBron James</h1>
+<span class="bg-slate-100 dark:bg-[#1e2a44] text-slate-600 dark:text-slate-400 text-xs font-bold px-2 py-1 rounded">NBA</span>
+</div>
+<p class="text-slate-600 dark:text-[#92a4c9] text-lg font-medium mt-1">#23 | Forward | Los Angeles Lakers</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-sm text-green-500">sync</span>
+<p class="text-slate-500 dark:text-[#92a4c9] text-xs font-normal">Updated 2 mins ago (Real-time Feed)</p>
+</div>
+</div>
+</div>
+<div class="flex w-full max-w-[480px] gap-3 @[480px]:w-auto">
+<button class="flex items-center justify-center rounded-lg h-11 px-6 bg-slate-100 dark:bg-[#1e2a44] text-slate-900 dark:text-white text-sm font-bold transition-all hover:bg-slate-200 dark:hover:bg-[#232f48] flex-1 @[480px]:flex-auto">
+<span class="material-symbols-outlined mr-2 text-xl">person_add</span>
+<span class="truncate">Follow</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-11 px-6 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:brightness-110 transition-all flex-1 @[480px]:flex-auto">
+<span class="material-symbols-outlined mr-2 text-xl">download</span>
+<span class="truncate">Export Stats</span>
+</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+<div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#1e2a44] shadow-sm hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<p class="text-slate-600 dark:text-slate-300 text-sm font-medium">PPG (Season)</p>
+<span class="text-[10px] bg-slate-100 dark:bg-[#1e2a44] px-1.5 py-0.5 rounded text-slate-500">N=68</span>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-tight">25.7</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-green-500 text-sm">trending_up</span>
+<p class="text-green-500 text-sm font-semibold">+1.2% vs career</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#1e2a44] shadow-sm hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<p class="text-slate-600 dark:text-slate-300 text-sm font-medium">RPG</p>
+<span class="text-[10px] bg-slate-100 dark:bg-[#1e2a44] px-1.5 py-0.5 rounded text-slate-500">N=68</span>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-tight">7.3</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-orange-500 text-sm">trending_down</span>
+<p class="text-orange-500 text-sm font-semibold">-0.5% vs L10</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#1e2a44] shadow-sm hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<p class="text-slate-600 dark:text-slate-300 text-sm font-medium">APG</p>
+<span class="text-[10px] bg-slate-100 dark:bg-[#1e2a44] px-1.5 py-0.5 rounded text-slate-500">N=68</span>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-tight">8.3</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-green-500 text-sm">trending_up</span>
+<p class="text-green-500 text-sm font-semibold">+2.1% league rank</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#111827] border border-slate-200 dark:border-[#1e2a44] shadow-sm hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<p class="text-slate-600 dark:text-slate-300 text-sm font-medium">PER</p>
+<span class="text-[10px] bg-slate-100 dark:bg-[#1e2a44] px-1.5 py-0.5 rounded text-slate-500">N=68</span>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-tight">23.91</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-slate-400 text-sm">remove</span>
+<p class="text-slate-500 text-sm font-semibold">Stable</p>
+</div>
+</div>
+</div>
+<div class="relative group">
+<h2 class="text-slate-900 dark:text-white text-xl font-bold tracking-tight mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">rocket_launch</span>
+                The Launchpad
+            </h2>
+<div class="flex items-center gap-3 @container bg-white dark:bg-[#111827] p-1.5 rounded-xl border-2 border-primary/20 focus-within:border-primary transition-all shadow-xl">
+<div class="flex flex-1 flex-col">
+<div class="flex flex-1 items-stretch">
+<div class="flex items-center pl-4 pr-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-10 shrink-0 shadow-sm" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC97MoAImyoHvB7Bd52pkvExvUcq5KKv2C83bNp7RNIVe5-LKLa--osoWXYYLPfjoJy5qew03CPEPB7-RP2nduPbo6NKw-PfiWZoggKyMOlSUPR9r0jOfeSTHbEisF2OT75lqEkV5wB-0_2A3nUNzr9NoIVALSbZ-AvpRI3H-2EfF-DGFIkvFVaG65sjmsOEQxUSJ6Cdh5hbChrroeV0zHs7GIyViOq0i098hz8xmfgKn78snH3CaUiJkO6MBqItKR4eQlmEP5OsLs");'></div>
+</div>
+<div class="flex flex-1 flex-col">
+<textarea class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg bg-transparent border-none text-slate-900 dark:text-white focus:ring-0 text-lg font-medium leading-normal py-4 placeholder:text-slate-400 dark:placeholder:text-[#455d8c]" placeholder="Ask a question about LeBron James... (e.g. 'Performance on 0 days rest vs. 2+ days?')"></textarea>
+<div class="flex items-center justify-between px-4 pb-4">
+<div class="flex items-center gap-1">
+<button class="flex items-center justify-center p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e2a44] text-slate-500 dark:text-[#92a4c9] transition-colors">
+<span class="material-symbols-outlined">mic</span>
+</button>
+<button class="flex items-center justify-center p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e2a44] text-slate-500 dark:text-[#92a4c9] transition-colors">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<button class="flex items-center justify-center p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e2a44] text-primary transition-colors">
+<span class="material-symbols-outlined">magic_button</span>
+</button>
+</div>
+<button class="min-w-[120px] cursor-pointer items-center justify-center rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold shadow-md hover:brightness-110 active:scale-95 transition-all">
+                                    Analyze Query
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mt-4 px-2">
+<span class="text-xs text-slate-500 dark:text-slate-400 font-medium py-1">Try:</span>
+<button class="text-xs font-semibold bg-slate-100 dark:bg-[#1e2a44] text-slate-600 dark:text-[#92a4c9] px-3 py-1.5 rounded-full hover:bg-primary/10 hover:text-primary transition-colors">Efficiency vs 4th Quarter Defenses</button>
+<button class="text-xs font-semibold bg-slate-100 dark:bg-[#1e2a44] text-slate-600 dark:text-[#92a4c9] px-3 py-1.5 rounded-full hover:bg-primary/10 hover:text-primary transition-colors">Shot chart @ Away games</button>
+<button class="text-xs font-semibold bg-slate-100 dark:bg-[#1e2a44] text-slate-600 dark:text-[#92a4c9] px-3 py-1.5 rounded-full hover:bg-primary/10 hover:text-primary transition-colors">Correlation: AD presence vs Rebounds</button>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="text-slate-900 dark:text-white text-xl font-bold tracking-tight">Recent Games</h3>
+<div class="flex bg-slate-100 dark:bg-[#111827] p-1 rounded-lg border border-slate-200 dark:border-[#1e2a44]">
+<button class="px-4 py-1.5 text-xs font-bold bg-white dark:bg-primary text-slate-900 dark:text-white rounded-md shadow-sm">Last 10</button>
+<button class="px-4 py-1.5 text-xs font-bold text-slate-500 dark:text-[#92a4c9] hover:text-primary transition-colors">Season</button>
+<button class="px-4 py-1.5 text-xs font-bold text-slate-500 dark:text-[#92a4c9] hover:text-primary transition-colors">Post-Season</button>
+</div>
+</div>
+<div class="overflow-hidden rounded-xl border border-slate-200 dark:border-[#1e2a44] bg-white dark:bg-[#111827] shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-slate-50 dark:bg-[#1e2a44] text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase tracking-wider">
+<tr>
+<th class="px-6 py-4">Date</th>
+<th class="px-6 py-4">Opponent</th>
+<th class="px-6 py-4">Result</th>
+<th class="px-6 py-4">MIN</th>
+<th class="px-6 py-4 text-primary">PTS</th>
+<th class="px-6 py-4">REB</th>
+<th class="px-6 py-4">AST</th>
+<th class="px-6 py-4">FG%</th>
+<th class="px-6 py-4 text-right">+/-</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-[#1e2a44] text-sm font-medium">
+<tr class="hover:bg-slate-50 dark:hover:bg-[#1c2636] transition-colors cursor-pointer group">
+<td class="px-6 py-4 text-slate-500 dark:text-slate-400">Apr 12</td>
+<td class="px-6 py-4 flex items-center gap-2">
+<div class="size-6 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+                                @ GSW
+                            </td>
+<td class="px-6 py-4"><span class="text-green-500">W</span> 121-105</td>
+<td class="px-6 py-4">36</td>
+<td class="px-6 py-4 font-bold text-slate-900 dark:text-white">33</td>
+<td class="px-6 py-4">7</td>
+<td class="px-6 py-4">11</td>
+<td class="px-6 py-4">58.3%</td>
+<td class="px-6 py-4 text-right font-bold text-green-500">+14</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-[#1c2636] transition-colors cursor-pointer">
+<td class="px-6 py-4 text-slate-500 dark:text-slate-400">Apr 10</td>
+<td class="px-6 py-4 flex items-center gap-2">
+<div class="size-6 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+                                vs MIN
+                            </td>
+<td class="px-6 py-4"><span class="text-red-500">L</span> 102-108</td>
+<td class="px-6 py-4">38</td>
+<td class="px-6 py-4 font-bold text-slate-900 dark:text-white">28</td>
+<td class="px-6 py-4">10</td>
+<td class="px-6 py-4">9</td>
+<td class="px-6 py-4">47.6%</td>
+<td class="px-6 py-4 text-right font-bold text-red-500">-2</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-slate-100 dark:border-[#1e2a44] bg-slate-50/50 dark:bg-[#0d131f] flex justify-between items-center">
+<p class="text-xs text-slate-500 dark:text-[#92a4c9]">Showing 2 of 68 season games</p>
+<button class="text-xs font-bold text-primary hover:underline">View Full Game Log</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-4">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight px-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">location_on</span>
+                    Venue Splits
+                </h3>
+<div class="bg-white dark:bg-[#111827] rounded-xl border border-slate-200 dark:border-[#1e2a44] p-4">
+<div class="space-y-4">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-slate-600 dark:text-slate-300">Home Efficiency</span>
+<span class="text-primary">27.4 PPG</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-[#1e2a44] h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[85%] rounded-full"></div>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-slate-600 dark:text-slate-300">Away Efficiency</span>
+<span class="text-slate-400">23.9 PPG</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-[#1e2a44] h-2 rounded-full overflow-hidden">
+<div class="bg-slate-400 dark:bg-[#455d8c] h-full w-[70%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight px-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">schedule</span>
+                    Rest Patterns
+                </h3>
+<div class="bg-white dark:bg-[#111827] rounded-xl border border-slate-200 dark:border-[#1e2a44] p-4">
+<div class="space-y-4">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-slate-600 dark:text-slate-300">0 Days Rest</span>
+<span class="text-orange-400">20.1 PPG</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-[#1e2a44] h-2 rounded-full overflow-hidden">
+<div class="bg-orange-400 h-full w-[55%] rounded-full"></div>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-xs font-bold mb-1">
+<span class="text-slate-600 dark:text-slate-300">2+ Days Rest</span>
+<span class="text-green-500">28.5 PPG</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-[#1e2a44] h-2 rounded-full overflow-hidden">
+<div class="bg-green-500 h-full w-[90%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="border-t border-slate-200 dark:border-[#1e2a44] px-4 lg:px-40 py-10 bg-slate-50 dark:bg-background-dark">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2 text-slate-500 dark:text-[#92a4c9]">
+<span class="material-symbols-outlined text-sm">database</span>
+<p class="text-xs font-medium uppercase tracking-widest">Powered by StatsEngine v4.2.1</p>
+</div>
+<div class="flex gap-8 text-xs font-bold text-slate-400 dark:text-[#92a4c9]">
+<a class="hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="hover:text-primary transition-colors" href="#">API Access</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+<div class="text-xs text-slate-400 dark:text-[#455d8c]">
+            © 2024 Stat Sleuth Analytics. All rights reserved.
+        </div>
+</div>
+</footer>
+
+</body></html>

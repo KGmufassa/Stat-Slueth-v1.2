@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stat Sleuth | Sleuth Hound Query Canvas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#0B101B",
+                        "surface-dark": "#192233",
+                        "border-dark": "#232f48"
+                    },
+                    fontFamily: {
+                        display: "Lexend"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    }
+                }
+            }
+        };
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0B101B;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #232f48;
+            border-radius: 10px;
+        }
+        .metric-row {
+            @apply flex items-center justify-between bg-surface-dark/60 border border-border-dark rounded px-4 h-9 transition-colors hover:bg-surface-dark;
+        }
+        .metric-value {
+            @apply text-xs font-black text-white w-16 shrink-0;
+        }
+        .metric-label {
+            @apply flex-1 text-center text-[8px] font-bold uppercase tracking-[0.15em] text-slate-500;
+        }
+        .sidebar-item {
+            @apply flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all text-xs border border-transparent hover:border-border-dark;
+        }
+        .nav-link {
+            @apply text-[13px] font-medium transition-colors py-2 px-1 relative;
+        }
+        .nav-link.active {
+            @apply text-white;
+        }
+        .nav-link.active::after {
+            content: '';
+            @apply absolute bottom-[-18px] left-0 w-full h-[2px] bg-primary;
+        }
+        .nav-link.inactive {
+            @apply text-slate-400 hover:text-white;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="sticky top-0 z-50 w-full border-b border-solid border-white/5 bg-background-dark px-6 py-0">
+<div class="max-w-[1440px] mx-auto flex items-center justify-between h-14">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<div class="size-8 bg-primary/20 rounded flex items-center justify-center border border-primary/30">
+<span class="material-symbols-outlined text-primary text-xl font-bold">bar_chart_4_bars</span>
+</div>
+<h1 class="text-white text-base font-bold tracking-tight">Stat Sleuth</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="nav-link active" href="#">Sleuth Hound</a>
+<a class="nav-link inactive" href="#">Players</a>
+<a class="nav-link inactive" href="#">Teams</a>
+<a class="nav-link inactive" href="#">Scanner</a>
+<a class="nav-link inactive" href="#">Presets</a>
+</nav>
+</div>
+<div class="flex items-center gap-5">
+<div class="relative group hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg">search</span>
+<input class="bg-[#1A2131] border-none text-[13px] text-white rounded-md pl-10 pr-4 py-1.5 w-64 focus:ring-1 focus:ring-primary/50 placeholder:text-slate-500" placeholder="Ask anything..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center text-slate-400 hover:text-white transition-colors relative">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+</button>
+<button class="flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+</button>
+<div class="size-8 rounded-full overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all">
+<img alt="User avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUCzz2q2x_wRBwjzEcKb_ieR17IrUe7Ru0zs9I-vcsWRLIHlmL7nmEEI0FWNgJfOvdOU94EiCyyR9gk-9_U8HMBV5Qm5izvzwpQr6n1Cr0HV55N1BLSXUsmoK-GZewBWHGwOovekLFal71p1PDwOpORAE4-AUsJhUsP5dkR-hE8X8sAkUj4Dj4aIiq3ZRsSU0ykQCbvHbEWw9Qd7Wi88LN3i1aY4R3QAcPpOJaN7QyaevxafcWx0opNzxteDo5bH7fUiO8BILVTfA"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class="flex-1 max-w-[1440px] mx-auto w-full flex">
+<aside class="w-64 border-r border-white/5 hidden lg:flex flex-col p-4 shrink-0 bg-background-dark/50">
+<div class="flex items-center justify-between mb-4 mt-2">
+<h2 class="text-slate-400 text-[10px] font-bold uppercase tracking-widest px-3">Recent Queries</h2>
+<button class="text-slate-500 hover:text-white"><span class="material-symbols-outlined text-sm">history</span></button>
+</div>
+<div class="space-y-1 overflow-y-auto custom-scrollbar flex-1 pr-1">
+<a class="sidebar-item bg-white/5 border-border-dark text-white" href="#">
+<span class="material-symbols-outlined text-sm text-primary">manage_search</span>
+<span class="truncate">LeBron vs Durant 23-24</span>
+</a>
+<a class="sidebar-item" href="#">
+<span class="material-symbols-outlined text-sm">manage_search</span>
+<span class="truncate">Curry 3P% last 10 games</span>
+</a>
+<a class="sidebar-item" href="#">
+<span class="material-symbols-outlined text-sm">manage_search</span>
+<span class="truncate">Nuggets Bench Efficiency</span>
+</a>
+<a class="sidebar-item" href="#">
+<span class="material-symbols-outlined text-sm">manage_search</span>
+<span class="truncate">Wemby Blocks vs HOU</span>
+</a>
+<a class="sidebar-item" href="#">
+<span class="material-symbols-outlined text-sm">manage_search</span>
+<span class="truncate">Top 10 TS% Min 20 PPG</span>
+</a>
+<a class="sidebar-item" href="#">
+<span class="material-symbols-outlined text-sm">manage_search</span>
+<span class="truncate">LAL Defensive Rating March</span>
+</a>
+</div>
+<div class="mt-4 pt-4 border-t border-white/5">
+<button class="w-full sidebar-item justify-center text-primary bg-primary/10 border-primary/20">
+<span class="material-symbols-outlined text-sm">add</span>
+<span class="font-bold">New Query</span>
+</button>
+</div>
+</aside>
+<main class="flex-1 px-8 py-8 overflow-hidden">
+<section class="flex flex-col lg:flex-row items-stretch gap-4 mb-8">
+<div class="w-full lg:w-48 shrink-0">
+<label class="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 px-1">Sport</label>
+<div class="relative">
+<select class="appearance-none w-full rounded-lg text-white border border-border-dark bg-surface-dark h-11 px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none cursor-pointer">
+<option value="auto">Auto-Detect</option>
+<option value="nba">NBA Basketball</option>
+<option value="nfl">NFL Football</option>
+<option value="mlb">MLB Baseball</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-base">unfold_more</span>
+<span class="absolute -top-2 -right-1 bg-primary text-[9px] px-1.5 py-0.5 rounded font-bold text-white shadow-lg">AI</span>
+</div>
+</div>
+<div class="flex-1">
+<label class="block text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1.5 px-1">NLP Intent Query</label>
+<div class="flex w-full items-stretch rounded-lg h-11 bg-surface-dark border border-border-dark focus-within:ring-2 focus-within:ring-primary transition-all">
+<div class="text-slate-400 flex items-center justify-center px-4">
+<span class="material-symbols-outlined text-lg">search</span>
+</div>
+<input class="flex-1 bg-transparent border-none text-white focus:ring-0 placeholder:text-slate-500 text-sm" placeholder="Compare LeBron James and Kevin Durant..." value="Compare LeBron James and Kevin Durant shooting efficiency last 2 seasons"/>
+<button class="px-3 text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+<div class="flex items-center pr-1.5">
+<button class="bg-primary hover:bg-blue-600 text-white text-[11px] font-bold px-6 h-8 rounded transition-all uppercase tracking-wider">Analyze</button>
+</div>
+</div>
+</div>
+</section>
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-4">
+<h2 class="text-white text-xl font-bold tracking-tight">Query Canvas</h2>
+<div class="flex items-center gap-2">
+<span class="bg-surface-dark border border-border-dark text-slate-400 text-[9px] px-2 py-0.5 rounded font-mono">N: 20</span>
+<span class="bg-primary/20 border border-primary/30 text-primary text-[9px] px-2 py-0.5 rounded font-mono">Last 2 Seasons</span>
+</div>
+</div>
+<button class="flex items-center gap-2 bg-surface-dark border border-border-dark hover:border-primary/50 text-white px-4 py-2 rounded-lg font-bold text-[10px] transition-all uppercase tracking-wide">
+<span class="material-symbols-outlined text-[16px]">bookmark</span>
+<span>Save Preset</span>
+</button>
+</div>
+<div class="grid grid-cols-12 gap-6">
+<div class="col-span-12 xl:col-span-4 flex flex-col gap-3">
+<div class="bg-surface-dark border border-border-dark rounded-xl p-4 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="size-9 rounded-full border-2 border-primary overflow-hidden shadow-lg shadow-primary/20">
+<img alt="Player A" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtkxM6dhsG0mnXJGL0-oGsUL2oYjl1qoCEv1zJj2MLdtUZwi_cjJljaKm6znqln-hz0urGpwtQAasoEvTuIc2Vy1ywdDAQh3DiItIWjW_zob2Zxvo7sngm8r98lQ8CjMIafRhk5dRS6BqgzxnwMgAIoN7Yr_hjkOfgwYFjCqzJzzERVwhVCuCwlnFRCzEcqMbVV_Qin-0IN_8qkqYyUAofXrmiLogkyCBz73aZVyf8mFpuZjgt954UrziCz21mwTkEonR-JBcm_O8"/>
+</div>
+<div>
+<h4 class="text-white font-bold text-xs">LeBron James</h4>
+<p class="text-slate-500 text-[8px] font-bold uppercase">LAL | F</p>
+</div>
+</div>
+<div class="text-slate-700 font-black text-[10px] italic">VS</div>
+<div class="flex items-center gap-2 text-right">
+<div>
+<h4 class="text-white font-bold text-xs">Kevin Durant</h4>
+<p class="text-slate-500 text-[8px] font-bold uppercase">PHX | F</p>
+</div>
+<div class="size-9 rounded-full border-2 border-slate-700 overflow-hidden shadow-lg shadow-black/20">
+<img alt="Player B" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7DAP-0_ggB_Vsi2wvY7iU7xNRSoXnd43uJxfGlTL8FYQ2iJ55bioWXNGoY2n-0-12tjgOMFaTMA54FtPIDMRu631wTwlC9TwMNEBoqOoGx63TLuyW1dNTKk9HpoC7ch7_5J41fiOoZUITd-kRn_6sns9YLd0CTJURJSI6auwSa96P1jOxNyy3s-fNEUqq3yF-nUTrjfR1xYWQvgKi0haXH0CQ2POp6CG36cbzew0JxW3V19Mse2tiRDFeYUuMXsMkZo0lZSAk9cc"/>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-1.5 p-1.5 border border-primary/20 rounded-xl bg-primary/5">
+<div class="metric-row">
+<span class="metric-value text-left text-emerald-400">64.2%</span>
+<span class="metric-label">TRUE SHOOTING</span>
+<span class="metric-value text-right">62.8%</span>
+</div>
+<div class="metric-row">
+<span class="metric-value text-left">31.5%</span>
+<span class="metric-label">USAGE RATE</span>
+<span class="metric-value text-right text-emerald-400">32.1%</span>
+</div>
+<div class="metric-row">
+<span class="metric-value text-left text-emerald-400">26.4</span>
+<span class="metric-label">PER</span>
+<span class="metric-value text-right">25.9</span>
+</div>
+<div class="metric-row">
+<span class="metric-value text-left">118.4</span>
+<span class="metric-label">OFF RATING</span>
+<span class="metric-value text-right text-emerald-400">121.2</span>
+</div>
+<div class="metric-row">
+<span class="metric-value text-left text-emerald-400">8.4</span>
+<span class="metric-label">WIN SHARES</span>
+<span class="metric-value text-right">7.9</span>
+</div>
+</div>
+</div>
+<div class="col-span-12 xl:col-span-8 flex flex-col gap-6">
+<div class="bg-surface-dark border border-border-dark rounded-xl overflow-hidden shadow-2xl">
+<div class="px-5 py-3 border-b border-border-dark flex items-center justify-between bg-white/5">
+<h3 class="text-white font-bold flex items-center gap-2 text-[10px] uppercase tracking-wider">
+<span class="material-symbols-outlined text-primary text-sm">compare_arrows</span>
+                                Head-to-Head Comparison
+                            </h3>
+<span class="text-slate-500 text-[8px] font-bold uppercase tracking-widest">Last 2 Seasons [N=20]</span>
+</div>
+<div class="px-8 py-6">
+<div class="flex items-center justify-between mb-8 max-w-xl mx-auto">
+<div class="flex items-center gap-4">
+<div class="size-14 rounded-full border-2 border-primary/40 overflow-hidden shadow-xl shadow-primary/10">
+<img alt="LeBron James" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtkxM6dhsG0mnXJGL0-oGsUL2oYjl1qoCEv1zJj2MLdtUZwi_cjJljaKm6znqln-hz0urGpwtQAasoEvTuIc2Vy1ywdDAQh3DiItIWjW_zob2Zxvo7sngm8r98lQ8CjMIafRhk5dRS6BqgzxnwMgAIoN7Yr_hjkOfgwYFjCqzJzzERVwhVCuCwlnFRCzEcqMbVV_Qin-0IN_8qkqYyUAofXrmiLogkyCBz73aZVyf8mFpuZjgt954UrziCz21mwTkEonR-JBcm_O8"/>
+</div>
+<div>
+<h4 class="text-white font-bold text-base leading-tight">LeBron James</h4>
+<p class="text-slate-500 text-[9px] uppercase font-bold tracking-tighter">LAL | FORWARD</p>
+</div>
+</div>
+<div class="px-6 text-slate-700 font-black text-lg italic">VS</div>
+<div class="flex items-center gap-4 flex-row-reverse text-right">
+<div class="size-14 rounded-full border-2 border-slate-700/40 overflow-hidden shadow-xl shadow-black/10">
+<img alt="Kevin Durant" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7DAP-0_ggB_Vsi2wvY7iU7xNRSoXnd43uJxfGlTL8FYQ2iJ55bioWXNGoY2n-0-12tjgOMFaTMA54FtPIDMRu631wTwlC9TwMNEBoqOoGx63TLuyW1dNTKk9HpoC7ch7_5J41fiOoZUITd-kRn_6sns9YLd0CTJURJSI6auwSa96P1jOxNyy3s-fNEUqq3yF-nUTrjfR1xYWQvgKi0haXH0CQ2POp6CG36cbzew0JxW3V19Mse2tiRDFeYUuMXsMkZo0lZSAk9cc"/>
+</div>
+<div>
+<h4 class="text-white font-bold text-base leading-tight">Kevin Durant</h4>
+<p class="text-slate-500 text-[9px] uppercase font-bold tracking-tighter">PHX | FORWARD</p>
+</div>
+</div>
+</div>
+<div class="space-y-4 max-w-xl mx-auto pb-2">
+<div class="relative">
+<div class="flex justify-between text-[10px] font-bold mb-1">
+<span class="text-slate-400">25.7</span>
+<span class="text-slate-400 uppercase tracking-widest text-[8px]">PPG</span>
+<span class="text-white">27.1</span>
+</div>
+<div class="h-1.5 flex bg-slate-800/50 rounded-full overflow-hidden">
+<div class="w-1/2 flex justify-end">
+<div class="w-[85%] bg-slate-600 h-full rounded-l-full"></div>
+</div>
+<div class="w-1/2">
+<div class="w-[95%] bg-primary h-full rounded-r-full"></div>
+</div>
+</div>
+</div>
+<div class="relative">
+<div class="flex justify-between text-[10px] font-bold mb-1">
+<span class="text-white">54.2%</span>
+<span class="text-slate-400 uppercase tracking-widest text-[8px]">FG%</span>
+<span class="text-slate-400">52.8%</span>
+</div>
+<div class="h-1.5 flex bg-slate-800/50 rounded-full overflow-hidden">
+<div class="w-1/2 flex justify-end">
+<div class="w-[95%] bg-primary h-full rounded-l-full"></div>
+</div>
+<div class="w-1/2">
+<div class="w-[88%] bg-slate-600 h-full rounded-r-full"></div>
+</div>
+</div>
+</div>
+<div class="relative">
+<div class="flex justify-between text-[10px] font-bold mb-1">
+<span class="text-white">7.3</span>
+<span class="text-slate-400 uppercase tracking-widest text-[8px]">APG</span>
+<span class="text-slate-400">5.0</span>
+</div>
+<div class="h-1.5 flex bg-slate-800/50 rounded-full overflow-hidden">
+<div class="w-1/2 flex justify-end">
+<div class="w-[90%] bg-primary h-full rounded-l-full"></div>
+</div>
+<div class="w-1/2">
+<div class="w-[60%] bg-slate-600 h-full rounded-r-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-surface-dark border border-border-dark rounded-xl overflow-hidden flex flex-col">
+<div class="px-4 py-2.5 border-b border-border-dark flex items-center justify-between bg-white/5">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full border border-primary overflow-hidden">
+<img alt="LeBron James" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtkxM6dhsG0mnXJGL0-oGsUL2oYjl1qoCEv1zJj2MLdtUZwi_cjJljaKm6znqln-hz0urGpwtQAasoEvTuIc2Vy1ywdDAQh3DiItIWjW_zob2Zxvo7sngm8r98lQ8CjMIafRhk5dRS6BqgzxnwMgAIoN7Yr_hjkOfgwYFjCqzJzzERVwhVCuCwlnFRCzEcqMbVV_Qin-0IN_8qkqYyUAofXrmiLogkyCBz73aZVyf8mFpuZjgt954UrziCz21mwTkEonR-JBcm_O8"/>
+</div>
+<h3 class="text-white font-bold text-[10px] uppercase">James Game Logs</h3>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[7px] font-bold uppercase">LAL</span>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left text-[10px] border-collapse">
+<thead>
+<tr class="bg-background-dark/50 text-slate-400 font-bold uppercase text-[7px] tracking-widest border-b border-border-dark">
+<th class="px-4 py-2">Date</th>
+<th class="px-4 py-2">Opp</th>
+<th class="px-4 py-2">PTS</th>
+<th class="px-4 py-2 text-right">+/-</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-dark">
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-4 py-2 text-slate-300">Mar 24</td>
+<td class="px-4 py-2 font-bold text-white text-[9px]">vs PHX</td>
+<td class="px-4 py-2 font-bold text-white text-[9px]">28</td>
+<td class="px-4 py-2 text-right text-emerald-500 font-bold">+12</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-4 py-2 text-slate-300">Mar 22</td>
+<td class="px-4 py-2 font-bold text-white text-[9px]">@ PHI</td>
+<td class="px-4 py-2 font-bold text-white text-[9px]">23</td>
+<td class="px-4 py-2 text-right text-rose-500 font-bold">-4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-xl overflow-hidden flex flex-col">
+<div class="px-4 py-2.5 border-b border-border-dark flex items-center justify-between bg-white/5">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full border border-slate-700 overflow-hidden">
+<img alt="Kevin Durant" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7DAP-0_ggB_Vsi2wvY7iU7xNRSoXnd43uJxfGlTL8FYQ2iJ55bioWXNGoY2n-0-12tjgOMFaTMA54FtPIDMRu631wTwlC9TwMNEBoqOoGx63TLuyW1dNTKk9HpoC7ch7_5J41fiOoZUITd-kRn_6sns9YLd0CTJURJSI6auwSa96P1jOxNyy3s-fNEUqq3yF-nUTrjfR1xYWQvgKi0haXH0CQ2POp6CG36cbzew0JxW3V19Mse2tiRDFeYUuMXsMkZo0lZSAk9cc"/>
+</div>
+<h3 class="text-white font-bold text-[10px] uppercase">Durant Game Logs</h3>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-300 text-[7px] font-bold uppercase">PHX</span>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left text-[10px] border-collapse">
+<thead>
+<tr class="bg-background-dark/50 text-slate-400 font-bold uppercase text-[7px] tracking-widest border-b border-border-dark">
+<th class="px-4 py-2">Date</th>
+<th class="px-4 py-2">Opp</th>
+<th class="px-4 py-2">PTS</th>
+<th class="px-4 py-2 text-right">+/-</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-dark">
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-4 py-2 text-slate-300">Mar 25</td>
+<td class="px-4 py-2 font-bold text-white text-[9px]">@ SAS</td>
+<td class="px-4 py-2 font-bold text-white text-[9px]">29</td>
+<td class="px-4 py-2 text-right text-rose-500 font-bold">-2</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-4 py-2 text-slate-300">Mar 23</td>
+<td class="px-4 py-2 font-bold text-white text-[9px]">@ SAS</td>
+<td class="px-4 py-2 font-bold text-white text-[9px]">25</td>
+<td class="px-4 py-2 text-right text-emerald-500 font-bold">+18</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<div class="fixed bottom-4 left-[calc(50%+128px)] -translate-x-1/2 bg-surface-dark/95 backdrop-blur border border-border-dark px-5 py-2 rounded-full shadow-2xl flex items-center gap-4 text-[10px] z-40">
+<div class="flex items-center gap-1.5 text-slate-400">
+<span class="size-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+<span class="font-medium">Live Data Connection</span>
+</div>
+<div class="w-px h-3 bg-border-dark"></div>
+<div class="flex items-center gap-1.5 text-slate-400">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span class="font-medium">240ms</span>
+</div>
+</div>
+
+</body></html>
