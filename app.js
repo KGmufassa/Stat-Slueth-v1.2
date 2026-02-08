@@ -248,28 +248,58 @@ const MockData = {
 // Router
 const Router = {
     routes: {
-        'query': renderQueryPage,
-        'compare': renderComparePage,
-        'presets': renderPresetsPage,
-        'breakout': renderBreakoutPage,
-        'data-health': renderDataHealthPage
+        'query': 'renderQueryPage',
+        'compare': 'renderComparePage',
+        'head-to-head': 'renderHeadToHeadPage',
+        'presets': 'renderPresetsPage',
+        'advanced-analytics': 'renderAdvancedAnalyticsPage',
+        'breakout': 'renderBreakoutPage',
+        'data-health': 'renderDataHealthPage',
+        'player': 'renderPlayerPage',
+        'scanner': 'renderScannerPage',
+        'scouting-report': 'renderScannerPage',
+        'injuries': 'renderInjuriesPage'
     },
 
     navigate(page) {
-        if (this.routes[page]) {
+        const renderFnName = this.routes[page];
+        if (renderFnName && window[renderFnName]) {
             AppState.currentPage = page;
+            if (window.Sidebar) {
+                Sidebar.render(page);
+            }
             this.updateActiveNav(page);
-            this.routes[page]();
+            window[renderFnName]();
         }
     },
 
     updateActiveNav(page) {
-        document.querySelectorAll('.nav-link').forEach(link => {
+        const parentMap = {
+            'head-to-head': 'player',
+            'scouting-report': 'player',
+            'advanced-analytics': 'player',
+            'injuries': 'player',
+            'breakout': 'player',
+            'compare': 'player'
+        };
+        const topPage = parentMap[page] || page;
+
+        document.querySelectorAll('.top-nav .nav-link').forEach(link => {
             link.classList.remove('active');
-            if (link.dataset.page === page) {
+            if (link.dataset.page === topPage) {
                 link.classList.add('active');
             }
         });
+
+        const sidebar = document.getElementById('app-sidebar');
+        if (sidebar) {
+            sidebar.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+        }
     },
 
     init() {

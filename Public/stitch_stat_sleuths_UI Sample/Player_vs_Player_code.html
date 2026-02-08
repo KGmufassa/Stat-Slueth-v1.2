@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stat Sleuth | Comparison Shortcut</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #232f48;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-[#232f48] px-6 py-3 bg-background-light dark:bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary text-2xl">analytics</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Stat Sleuth</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-600 dark:text-[#92a4c9] hover:text-primary dark:hover:text-white text-sm font-medium transition-colors" href="#">Dashboard</a>
+<a class="text-primary dark:text-white text-sm font-semibold border-b-2 border-primary pb-1" href="#">Compare</a>
+<a class="text-slate-600 dark:text-[#92a4c9] hover:text-primary dark:hover:text-white text-sm font-medium transition-colors" href="#">Teams</a>
+<a class="text-slate-600 dark:text-[#92a4c9] hover:text-primary dark:hover:text-white text-sm font-medium transition-colors" href="#">Players</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-4 items-center">
+<label class="hidden lg:flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full border border-slate-200 dark:border-none">
+<div class="text-slate-400 dark:text-[#92a4c9] flex bg-white dark:bg-[#232f48] items-center justify-center pl-3 rounded-l-lg">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-white dark:bg-[#232f48] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-[#92a4c9] px-3 rounded-r-lg text-sm font-normal focus:ring-0" placeholder="Ask anything..." value=""/>
+</div>
+</label>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-[#232f48] text-slate-600 dark:text-white hover:bg-slate-200 dark:hover:bg-[#324467] transition-colors">
+<span class="material-symbols-outlined text-xl">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-[#232f48] text-slate-600 dark:text-white hover:bg-slate-200 dark:hover:bg-[#324467] transition-colors">
+<span class="material-symbols-outlined text-xl">share</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" data-alt="User profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBpP5jRreZf8sx69rZh18Ca0MusMq3ZP-sMbYjbtIO0voYZDka0NMXEgzWO0UYs67SVGs05g_dF1OeJHJ6dsdOGSkUcbJ0WNPK7Cnf9r38ZvZhS107jJvIV_PffXtTYq1PXaFpf_TAACsbxytepJknBOlZH_LqFMvT_9-7eH4-rKwbWe9mNwLtRpEjrjzqPTFB9ZrSpU8jqC80hefMLOVsg2AS0Rny2zHAk2EYSpwJdgzbfDiKVG8lHYRYtRoVt-xp8B546gxHoLBI");'></div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="hidden xl:flex w-64 flex-col border-r border-slate-200 dark:border-[#232f48] bg-background-light dark:bg-background-dark p-4 gap-6">
+<div class="flex flex-col gap-1">
+<p class="px-3 text-xs font-bold text-slate-400 dark:text-[#92a4c9] uppercase tracking-wider">Analysis Toolset</p>
+<div class="flex flex-col gap-1 mt-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-[#92a4c9] hover:bg-slate-100 dark:hover:bg-[#232f48] hover:text-primary dark:hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-sm font-medium">Home</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-[#92a4c9] hover:bg-slate-100 dark:hover:bg-[#232f48] hover:text-primary dark:hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm font-medium">Advanced Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white shadow-lg shadow-primary/20" href="#">
+<span class="material-symbols-outlined">compare_arrows</span>
+<span class="text-sm font-medium">Head-to-Head</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-[#92a4c9] hover:bg-slate-100 dark:hover:bg-[#232f48] hover:text-primary dark:hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">person_search</span>
+<span class="text-sm font-medium">Scouting Report</span>
+</a>
+</div>
+</div>
+<div class="mt-auto pt-6 border-t border-slate-200 dark:border-[#232f48]">
+<div class="bg-primary/10 rounded-xl p-4 border border-primary/20">
+<p class="text-primary text-xs font-bold uppercase mb-1">Pro Plan</p>
+<p class="text-slate-600 dark:text-[#92a4c9] text-xs mb-3 leading-relaxed">Unlock advanced player-tracking and NLP insights.</p>
+<button class="w-full py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors">Upgrade Now</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto custom-scrollbar bg-background-light dark:bg-background-dark">
+<div class="max-w-[1200px] mx-auto p-6 flex flex-col gap-6">
+<!-- Page Heading & Controls -->
+<section class="flex flex-col gap-6">
+<div class="flex flex-wrap justify-between items-end gap-4">
+<div class="flex flex-col gap-1">
+<h1 class="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-tight">Compare Entities</h1>
+<p class="text-slate-500 dark:text-[#92a4c9] text-sm">Build side-by-side performance queries instantly</p>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-[#232f48] text-slate-700 dark:text-white rounded-lg text-sm font-bold hover:bg-slate-300 dark:hover:bg-[#324467] transition-all">
+<span class="material-symbols-outlined text-lg">delete</span>
+<span>Clear All</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all active:scale-95">
+<span class="material-symbols-outlined text-lg">save</span>
+<span>Save Report</span>
+</button>
+</div>
+</div>
+<!-- Comparison Builder Card -->
+<div class="bg-white dark:bg-[#192233] p-6 rounded-xl border border-slate-200 dark:border-[#232f48] shadow-sm">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+<!-- Scope Toggle -->
+<div class="lg:col-span-3">
+<p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase tracking-wider mb-3">Comparison Scope</p>
+<div class="flex h-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#232f48] p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-2 bg-white dark:bg-background-dark shadow-sm text-slate-900 dark:text-white text-xs font-bold">
+<span>Player</span>
+<input checked="" class="invisible w-0" name="compare_type" type="radio" value="Player"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-2 text-slate-400 dark:text-[#92a4c9] text-xs font-bold hover:text-slate-900 dark:hover:text-white">
+<span>Team</span>
+<input class="invisible w-0" name="compare_type" type="radio" value="Team"/>
+</label>
+</div>
+</div>
+<!-- Entity Selectors -->
+<div class="lg:col-span-9 flex flex-wrap sm:flex-nowrap gap-4 items-center">
+<div class="flex-1 min-w-[200px]">
+<p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase tracking-wider mb-3">Entity A</p>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary">person</span>
+<input class="w-full pl-12 pr-4 py-3 rounded-lg border border-slate-200 dark:border-[#324467] bg-slate-50 dark:bg-[#111722] text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="Search Player..." value="Stephen Curry"/>
+</div>
+</div>
+<div class="flex items-center justify-center pt-7">
+<span class="text-slate-400 font-black text-xl italic">VS</span>
+</div>
+<div class="flex-1 min-w-[200px]">
+<p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase tracking-wider mb-3">Entity B</p>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary">person</span>
+<input class="w-full pl-12 pr-4 py-3 rounded-lg border border-slate-200 dark:border-[#324467] bg-slate-50 dark:bg-[#111722] text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="Search Player..." value="Damian Lillard"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="flex flex-wrap gap-3 mt-6 pt-6 border-t border-slate-100 dark:border-[#232f48]">
+<button class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-[#324467] flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-[#92a4c9] hover:bg-slate-50 dark:hover:bg-[#232f48]">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span>Last 10 Games</span>
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-[#324467] flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-[#92a4c9] hover:bg-slate-50 dark:hover:bg-[#232f48]">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>All Venues</span>
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-[#324467] flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-[#92a4c9] hover:bg-slate-50 dark:hover:bg-[#232f48]">
+<span class="material-symbols-outlined text-sm">history</span>
+<span>Regular Season 23/24</span>
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Dynamic Canvas: Comparison Results -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Entity A Detail Card -->
+<div class="bg-white dark:bg-[#192233] rounded-xl overflow-hidden border border-slate-200 dark:border-[#232f48] shadow-sm">
+<div class="p-6 bg-primary/5 dark:bg-white/[0.02] border-b border-slate-100 dark:border-[#232f48] flex items-center gap-4">
+<div class="size-16 rounded-full bg-cover bg-center border-2 border-primary" data-alt="Stephen Curry player photo" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDDHGaGyCt21GJhtiwnRXpxyB5-r1mqRdrev42O0cxsCxfUS2oHaNbK0FAUl94zJwNdVjWkNQ6JtyJtD3ikorrrpV7-D3aRSHb6bGVyNImgM7UA3gTwHS66OWvjYl9398iaKLMHCCIXSOfucg9kvcOBtw4muSLcwhYKAnkcd3iAgItnrhVdvyh1GlNegfUSVFfBRtNGlqFzGQs2rA1zyOcqxe0BeQPbHVpWg4S25K3gUouRTc5oUHvgqbAG0V5iSfeZbhUVc9asL7w');"></div>
+<div>
+<h3 class="text-xl font-bold dark:text-white">Stephen Curry</h3>
+<p class="text-slate-500 dark:text-[#92a4c9] text-sm">Golden State Warriors • Guard</p>
+</div>
+</div>
+<div class="p-6 grid grid-cols-2 gap-4">
+<div class="bg-slate-50 dark:bg-[#111722] p-4 rounded-lg">
+<p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase mb-1">PPG</p>
+<p class="text-3xl font-black text-primary">26.4</p>
+<div class="flex items-center gap-1 text-[10px] text-green-500 font-bold mt-1">
+<span class="material-symbols-outlined text-[12px]">trending_up</span>
+<span>+2.1 vs Avg</span>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-[#111722] p-4 rounded-lg">
+<p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase mb-1">3P%</p>
+<p class="text-3xl font-black text-slate-900 dark:text-white">40.8%</p>
+<div class="flex items-center gap-1 text-[10px] text-slate-400 font-bold mt-1">
+<span class="material-symbols-outlined text-[12px]">horizontal_rule</span>
+<span>Neutral Trend</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Entity B Detail Card -->
+<div class="bg-white dark:bg-[#192233] rounded-xl overflow-hidden border border-slate-200 dark:border-[#232f48] shadow-sm">
+<div class="p-6 bg-slate-50 dark:bg-white/[0.02] border-b border-slate-100 dark:border-[#232f48] flex items-center gap-4">
+<div class="size-16 rounded-full bg-cover bg-center border-2 border-slate-300 dark:border-slate-700" data-alt="Damian Lillard player photo" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBoxoqJOqJfFcdgDGGJ87mEPbFztGrZfz9R-xg0cbxi7n6VHY1mltCff_GzhrZFtynwUcSxpZEp0ef7UuHg4p-4qfVZSvIxBpGvppz_s9yoAF3pNrOgyKMZ3doQ940tsDQKKPEAisRxsHzkpPRsYPxFD6ozScTZQji_nb-tBiXbGMnRqh5-Q6UwszCq2iLQEHA6vuHmuFIpn8FBmjtkgFtdhfIlPvOgxgkUSOgY5Eeks7BuEYWfRXHHhNAe_4GlX_I6JFNbeVNm8cQ');"></div>
+<div>
+<h3 class="text-xl font-bold dark:text-white">Damian Lillard</h3>
+<p class="text-slate-500 dark:text-[#92a4c9] text-sm">Milwaukee Bucks • Guard</p>
+</div>
+</div>
+<div class="p-6 grid grid-cols-2 gap-4">
+<div class="bg-slate-50 dark:bg-[#111722] p-4 rounded-lg">
+<p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase mb-1">PPG</p>
+<p class="text-3xl font-black text-slate-900 dark:text-white">24.3</p>
+<div class="flex items-center gap-1 text-[10px] text-red-500 font-bold mt-1">
+<span class="material-symbols-outlined text-[12px]">trending_down</span>
+<span>-1.2 vs Avg</span>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-[#111722] p-4 rounded-lg">
+<p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase mb-1">3P%</p>
+<p class="text-3xl font-black text-slate-900 dark:text-white">35.4%</p>
+<div class="flex items-center gap-1 text-[10px] text-red-500 font-bold mt-1">
+<span class="material-symbols-outlined text-[12px]">trending_down</span>
+<span>-3.1% vs Last 5</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Delta Table -->
+<section class="bg-white dark:bg-[#192233] rounded-xl border border-slate-200 dark:border-[#232f48] shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-100 dark:border-[#232f48] flex justify-between items-center">
+<h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">data_thresholding</span>
+                            Delta Analysis
+                        </h4>
+<span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-1 rounded uppercase tracking-tighter">Live Engine</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-[#111722]">
+<th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-[#92a4c9] uppercase tracking-wider">Statistic</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-[#92a4c9] uppercase tracking-wider text-center">Curry</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-[#92a4c9] uppercase tracking-wider text-center">Lillard</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-[#92a4c9] uppercase tracking-wider text-right">Delta</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-[#232f48]">
+<tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<td class="px-6 py-4 text-sm font-medium text-slate-700 dark:text-[#92a4c9]">Field Goal %</td>
+<td class="px-6 py-4 text-sm font-bold text-center">45.0%</td>
+<td class="px-6 py-4 text-sm font-bold text-center">42.4%</td>
+<td class="px-6 py-4 text-sm font-black text-right text-green-500">+2.6%</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<td class="px-6 py-4 text-sm font-medium text-slate-700 dark:text-[#92a4c9]">Assists Per Game</td>
+<td class="px-6 py-4 text-sm font-bold text-center">5.1</td>
+<td class="px-6 py-4 text-sm font-bold text-center">7.0</td>
+<td class="px-6 py-4 text-sm font-black text-right text-red-400">-1.9</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<td class="px-6 py-4 text-sm font-medium text-slate-700 dark:text-[#92a4c9]">Usage Rate %</td>
+<td class="px-6 py-4 text-sm font-bold text-center">30.2</td>
+<td class="px-6 py-4 text-sm font-bold text-center">28.1</td>
+<td class="px-6 py-4 text-sm font-black text-right text-green-500">+2.1</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+<td class="px-6 py-4 text-sm font-medium text-slate-700 dark:text-[#92a4c9]">True Shooting %</td>
+<td class="px-6 py-4 text-sm font-bold text-center">61.7%</td>
+<td class="px-6 py-4 text-sm font-bold text-center">59.0%</td>
+<td class="px-6 py-4 text-sm font-black text-right text-green-500">+2.7%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 bg-slate-50 dark:bg-[#111722] flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary">info</span>
+<p class="text-[11px] font-medium text-slate-500 dark:text-[#92a4c9]">Delta is calculated as (Entity A - Entity B). Positive values indicate Entity A advantage.</p>
+</div>
+</section>
+<!-- Performance Trajectory Chart placeholder -->
+<section class="bg-white dark:bg-[#192233] rounded-xl border border-slate-200 dark:border-[#232f48] shadow-sm p-6 mb-10">
+<div class="flex justify-between items-center mb-6">
+<h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">show_chart</span>
+                            Efficiency Trajectory (Last 15 Games)
+                        </h4>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-primary"></span>
+<span class="text-[11px] font-bold text-slate-500 dark:text-[#92a4c9]">Curry</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-slate-400"></span>
+<span class="text-[11px] font-bold text-slate-500 dark:text-[#92a4c9]">Lillard</span>
+</div>
+</div>
+</div>
+<!-- Mock Line Chart Area -->
+<div class="h-48 w-full relative overflow-hidden flex items-end gap-1">
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
+<div class="w-full h-px bg-slate-400 dark:bg-[#92a4c9]"></div>
+<div class="w-full h-px bg-slate-400 dark:bg-[#92a4c9]"></div>
+<div class="w-full h-px bg-slate-400 dark:bg-[#92a4c9]"></div>
+<div class="w-full h-px bg-slate-400 dark:bg-[#92a4c9]"></div>
+</div>
+<!-- Simple visual representation of a chart -->
+<div class="flex-1 h-full flex items-end justify-center relative">
+<div class="w-1/2 bg-primary/20 absolute bottom-1/3 h-1/2 rounded-full"></div>
+<div class="w-1/4 bg-primary h-[80%] rounded-full absolute bottom-4"></div>
+</div>
+<div class="flex-1 h-full flex items-end justify-center relative">
+<div class="w-1/2 bg-slate-400/20 absolute bottom-1/4 h-1/3 rounded-full"></div>
+<div class="w-1/4 bg-slate-400 h-[60%] rounded-full absolute bottom-4"></div>
+</div>
+<!-- More bars/visuals to simulate a trend -->
+<div class="flex-1 h-full flex items-end justify-center relative">
+<div class="w-full h-full bg-gradient-to-t from-primary/10 to-transparent rounded-t-lg"></div>
+<div class="absolute bottom-[70%] left-0 w-full h-[2px] bg-primary shadow-[0_0_8px_rgba(19,91,236,0.5)]"></div>
+<div class="absolute bottom-[50%] left-0 w-full h-[2px] bg-slate-400/50"></div>
+</div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] font-bold text-slate-400 dark:text-[#92a4c9] px-2">
+<span>OCT 25</span>
+<span>NOV 10</span>
+<span>NOV 25</span>
+<span>DEC 10</span>
+<span>DEC 25</span>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>
