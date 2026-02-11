@@ -5,8 +5,112 @@
 // State Management
 const AppState = {
     currentPage: 'query',
+    currentScannerFolderId: null,
     presets: JSON.parse(localStorage.getItem('statsleuths_presets') || '[]'),
     presetViewMode: localStorage.getItem('statsleuths_preset_view') || 'card',
+    scannerArchive: JSON.parse(localStorage.getItem('statsleuths_scanner_archive') || '{"folders":[],"scans":[]}'),
+    scannerArchiveExpanded: localStorage.getItem('statsleuths_scanner_archive_expanded') !== 'false',
+
+    saveScannerArchive() {
+        localStorage.setItem('statsleuths_scanner_archive', JSON.stringify(this.scannerArchive));
+    },
+
+    setScannerArchiveExpanded(expanded) {
+        this.scannerArchiveExpanded = Boolean(expanded);
+        localStorage.setItem('statsleuths_scanner_archive_expanded', this.scannerArchiveExpanded ? 'true' : 'false');
+    },
+
+    getScannerFolders() {
+        if (!this.scannerArchive || !Array.isArray(this.scannerArchive.folders)) {
+            this.scannerArchive = { folders: [], scans: [] };
+        }
+        return this.scannerArchive.folders;
+    },
+
+    getScannerFolder(folderId) {
+        return this.getScannerFolders().find((folder) => folder.id === folderId) || null;
+    },
+
+    createScannerFolder(name) {
+        const normalizedName = String(name || '').trim();
+        if (!normalizedName) {
+            return { ok: false, error: 'Folder name is required.' };
+        }
+
+        const existing = this.getScannerFolders().find((folder) => folder.name.toLowerCase() === normalizedName.toLowerCase());
+        if (existing) {
+            return { ok: false, error: 'Folder already exists.', folder: existing };
+        }
+
+        const folder = {
+            id: `scanner-folder-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+            name: normalizedName,
+            createdAt: new Date().toISOString()
+        };
+
+        this.scannerArchive.folders.push(folder);
+        this.saveScannerArchive();
+        return { ok: true, folder };
+    },
+
+    saveScannerScan(scan, folderId) {
+        if (!this.scannerArchive || !Array.isArray(this.scannerArchive.scans)) {
+            this.scannerArchive = { folders: [], scans: [] };
+        }
+
+        let targetFolderId = folderId;
+        let targetFolder = this.getScannerFolder(targetFolderId);
+
+        if (!targetFolder) {
+            const fallbackFolderName = 'General';
+            const existingFallback = this.getScannerFolders().find((folder) => folder.name === fallbackFolderName);
+            if (existingFallback) {
+                targetFolder = existingFallback;
+            } else {
+                const createResult = this.createScannerFolder(fallbackFolderName);
+                if (!createResult.ok) {
+                    return { ok: false, error: createResult.error || 'Could not create fallback folder.' };
+                }
+                targetFolder = createResult.folder;
+            }
+            targetFolderId = targetFolder.id;
+        }
+
+        const savedScan = {
+            id: `scanner-scan-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+            folderId: targetFolderId,
+            createdAt: new Date().toISOString(),
+            ...scan
+        };
+
+        this.scannerArchive.scans.push(savedScan);
+        this.saveScannerArchive();
+        return { ok: true, scan: savedScan, folder: targetFolder };
+    },
+
+    getScannerScansByFolder(folderId) {
+        if (!this.scannerArchive || !Array.isArray(this.scannerArchive.scans)) {
+            this.scannerArchive = { folders: [], scans: [] };
+        }
+        return this.scannerArchive.scans
+            .filter((scan) => scan.folderId === folderId)
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    },
+
+    getScannerScan(scanId) {
+        if (!this.scannerArchive || !Array.isArray(this.scannerArchive.scans)) {
+            this.scannerArchive = { folders: [], scans: [] };
+        }
+        return this.scannerArchive.scans.find((scan) => scan.id === scanId) || null;
+    },
+
+    deleteScannerScan(scanId) {
+        if (!this.scannerArchive || !Array.isArray(this.scannerArchive.scans)) {
+            this.scannerArchive = { folders: [], scans: [] };
+        }
+        this.scannerArchive.scans = this.scannerArchive.scans.filter((scan) => scan.id !== scanId);
+        this.saveScannerArchive();
+    },
 
     savePresets() {
         localStorage.setItem('statsleuths_presets', JSON.stringify(this.presets));
@@ -257,20 +361,45 @@ const Router = {
         'data-health': 'renderDataHealthPage',
         'player': 'renderPlayerPage',
         'scanner': 'renderScannerPage',
+        'scanner-archive': 'renderScannerArchivePage',
         'scouting-report': 'renderScannerPage',
         'injuries': 'renderInjuriesPage'
     },
 
+    resolveRoute(page) {
+        if (page.startsWith('scanner-archive:')) {
+            const folderId = page.slice('scanner-archive:'.length);
+            return {
+                routeKey: 'scanner-archive',
+                params: { folderId }
+            };
+        }
+
+        return {
+            routeKey: page,
+            params: {}
+        };
+    },
+
     navigate(page) {
-        const renderFnName = this.routes[page];
+        const resolved = this.resolveRoute(page);
+        const routeKey = resolved.routeKey;
+        const renderFnName = this.routes[routeKey];
+
         if (renderFnName && window[renderFnName]) {
-            AppState.currentPage = page;
+            AppState.currentPage = routeKey;
+            AppState.currentScannerFolderId = routeKey === 'scanner-archive' ? resolved.params.folderId : null;
             if (window.Sidebar) {
-                Sidebar.render(page);
+                Sidebar.render(routeKey);
             }
-            this.updateActiveNav(page);
+            this.updateActiveNav(routeKey);
             window[renderFnName]();
         }
+    },
+
+    navigateToScannerArchive(folderId) {
+        if (!folderId) return;
+        window.location.hash = `scanner-archive:${folderId}`;
     },
 
     updateActiveNav(page) {
@@ -280,7 +409,8 @@ const Router = {
             'advanced-analytics': 'player',
             'injuries': 'player',
             'breakout': 'player',
-            'compare': 'player'
+            'compare': 'player',
+            'scanner-archive': 'scanner'
         };
         const topPage = parentMap[page] || page;
 

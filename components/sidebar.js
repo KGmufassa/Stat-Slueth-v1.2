@@ -24,6 +24,9 @@ const Sidebar = {
             case 'scanner':
                 content = this.renderScannerSidebar();
                 break;
+            case 'scanner-archive':
+                content = this.renderScannerSidebar();
+                break;
             case 'presets':
                 content = this.renderPresetsSidebar();
                 break;
@@ -97,22 +100,49 @@ const Sidebar = {
 
     // 3. SCANNER (Scanner Tools)
     renderScannerSidebar() {
+        const folders = window.AppState && typeof AppState.getScannerFolders === 'function' ? AppState.getScannerFolders() : [];
+        const isArchiveExpanded = window.AppState ? AppState.scannerArchiveExpanded : true;
+        const activeFolderId = window.AppState ? AppState.currentScannerFolderId : null;
+
+        const folderMarkup = folders.length
+            ? folders.map((folder) => {
+                const isActive = AppState.currentPage === 'scanner-archive' && folder.id === activeFolderId;
+                const scanCount = AppState.getScannerScansByFolder(folder.id).length;
+                return `
+                    <button class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all ${isActive ? 'bg-primary/10 text-white border border-primary/30' : 'text-slate-400 hover:text-white hover:bg-white/5'}"
+                        onclick="Sidebar.openScannerFolder('${folder.id}')">
+                        <span class="truncate">${this.escapeHtml(folder.name)}</span>
+                        <span class="text-[10px] font-bold ${isActive ? 'text-primary' : 'text-slate-500'}">${scanCount}</span>
+                    </button>
+                `;
+            }).join('')
+            : '<p class="px-3 py-2 text-[11px] text-slate-500">No folders yet</p>';
+
         return `
             <div class="mb-8">
                 <h3 class="px-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Scanner Tools</h3>
                 <nav class="flex flex-col space-y-0.5 px-3">
-                    <button class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-primary text-white shadow-glow-sm transition-all mb-2">
+                    <button class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all mb-2 ${AppState.currentPage === 'scanner' ? 'bg-primary text-white shadow-glow-sm' : 'text-slate-400 hover:text-white hover:bg-white/5'}"
+                        onclick="Router.navigate('scanner')">
                         <span class="material-symbols-outlined text-[20px]">bolt</span>
                         <span>New Scan</span>
                     </button>
-                     <div class="pl-3 mt-2 space-y-1">
-                        <div class="flex items-center justify-between text-slate-400 text-xs px-3 py-2 font-bold uppercase tracking-wider cursor-pointer hover:text-white">
+                    <div class="pl-3 mt-2 space-y-1">
+                        <button class="w-full flex items-center justify-between text-slate-400 text-xs px-3 py-2 font-bold uppercase tracking-wider hover:text-white transition-colors"
+                            onclick="Sidebar.toggleScannerArchive()">
                             <span>Archive</span>
-                            <span class="material-symbols-outlined text-sm">expand_more</span>
-                        </div>
-                        <a href="#" class="block px-3 py-1.5 text-xs text-slate-500 hover:text-primary transition-colors pl-6">Player Props</a>
-                        <a href="#" class="block px-3 py-1.5 text-xs text-slate-500 hover:text-primary transition-colors pl-6">Team Trends</a>
-                        <a href="#" class="block px-3 py-1.5 text-xs text-slate-500 hover:text-primary transition-colors pl-6">Saved Alerts</a>
+                            <span class="material-symbols-outlined text-sm">${isArchiveExpanded ? 'expand_less' : 'expand_more'}</span>
+                        </button>
+                        ${isArchiveExpanded ? `
+                            <div class="space-y-1 pl-4">
+                                <button class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold text-primary hover:bg-primary/10 transition-colors"
+                                    onclick="Sidebar.createScannerFolder()">
+                                    <span class="material-symbols-outlined text-sm">create_new_folder</span>
+                                    <span>Create Folder</span>
+                                </button>
+                                ${folderMarkup}
+                            </div>
+                        ` : ''}
                     </div>
                 </nav>
             </div>
@@ -188,6 +218,45 @@ const Sidebar = {
                ${badge ? '<span class="bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded">NEW</span>' : ''}
             </a>
         `;
+    },
+
+    toggleScannerArchive() {
+        if (!window.AppState || typeof AppState.setScannerArchiveExpanded !== 'function') return;
+        AppState.setScannerArchiveExpanded(!AppState.scannerArchiveExpanded);
+        this.render(AppState.currentPage);
+    },
+
+    createScannerFolder() {
+        if (!window.AppState || typeof AppState.createScannerFolder !== 'function') return;
+        const name = window.prompt('Folder name');
+        if (name === null) return;
+
+        const result = AppState.createScannerFolder(name);
+        if (!result.ok) {
+            window.alert(result.error || 'Unable to create folder.');
+            return;
+        }
+
+        AppState.setScannerArchiveExpanded(true);
+        if (window.Router && typeof Router.navigateToScannerArchive === 'function') {
+            Router.navigateToScannerArchive(result.folder.id);
+        } else {
+            this.render(AppState.currentPage);
+        }
+    },
+
+    openScannerFolder(folderId) {
+        if (!window.Router || typeof Router.navigateToScannerArchive !== 'function') return;
+        Router.navigateToScannerArchive(folderId);
+    },
+
+    escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 };
 

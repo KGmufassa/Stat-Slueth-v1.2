@@ -6,643 +6,760 @@ function renderHeadToHeadPage() {
     const content = document.getElementById('app-content');
     if (!content) return;
 
-    const leagueOptions = ['NBA', 'NFL', 'MLB', 'NHL'];
-    const scopeOptions = [
-        { id: 'player', label: 'Player' },
-        { id: 'team', label: 'Team' }
-    ];
-
-    const playerDirectory = [
-        { name: 'LeBron James', league: 'NBA', team: 'Los Angeles Lakers', position: 'Forward' },
-        { name: 'Stephen Curry', league: 'NBA', team: 'Golden State Warriors', position: 'Guard' },
-        { name: 'Giannis Antetokounmpo', league: 'NBA', team: 'Milwaukee Bucks', position: 'Forward' },
-        { name: 'Kevin Durant', league: 'NBA', team: 'Phoenix Suns', position: 'Forward' },
-        { name: 'Patrick Mahomes', league: 'NFL', team: 'Kansas City Chiefs', position: 'Quarterback' },
-        { name: 'Josh Allen', league: 'NFL', team: 'Buffalo Bills', position: 'Quarterback' },
-        { name: 'Justin Jefferson', league: 'NFL', team: 'Minnesota Vikings', position: 'Wide Receiver' },
-        { name: 'Aaron Rodgers', league: 'NFL', team: 'New York Jets', position: 'Quarterback' },
-        { name: 'Mookie Betts', league: 'MLB', team: 'Los Angeles Dodgers', position: 'Outfielder' },
-        { name: 'Shohei Ohtani', league: 'MLB', team: 'Los Angeles Dodgers', position: 'Pitcher/DH' },
-        { name: 'Ronald Acuna Jr.', league: 'MLB', team: 'Atlanta Braves', position: 'Outfielder' },
-        { name: 'Mike Trout', league: 'MLB', team: 'Los Angeles Angels', position: 'Outfielder' },
-        { name: 'Connor McDavid', league: 'NHL', team: 'Edmonton Oilers', position: 'Center' },
-        { name: 'Auston Matthews', league: 'NHL', team: 'Toronto Maple Leafs', position: 'Center' },
-        { name: 'Cale Makar', league: 'NHL', team: 'Colorado Avalanche', position: 'Defense' },
-        { name: 'Sidney Crosby', league: 'NHL', team: 'Pittsburgh Penguins', position: 'Center' }
-    ];
-
-    const teamDirectory = [
-        { name: 'Boston Celtics', league: 'NBA', conference: 'East', division: 'Atlantic' },
-        { name: 'Milwaukee Bucks', league: 'NBA', conference: 'East', division: 'Central' },
-        { name: 'Phoenix Suns', league: 'NBA', conference: 'West', division: 'Pacific' },
-        { name: 'Denver Nuggets', league: 'NBA', conference: 'West', division: 'Northwest' },
-        { name: 'Kansas City Chiefs', league: 'NFL', conference: 'AFC', division: 'West' },
-        { name: 'Buffalo Bills', league: 'NFL', conference: 'AFC', division: 'East' },
-        { name: 'Dallas Cowboys', league: 'NFL', conference: 'NFC', division: 'East' },
-        { name: 'San Francisco 49ers', league: 'NFL', conference: 'NFC', division: 'West' },
-        { name: 'Los Angeles Dodgers', league: 'MLB', conference: 'NL', division: 'West' },
-        { name: 'Atlanta Braves', league: 'MLB', conference: 'NL', division: 'East' },
-        { name: 'New York Yankees', league: 'MLB', conference: 'AL', division: 'East' },
-        { name: 'Houston Astros', league: 'MLB', conference: 'AL', division: 'West' },
-        { name: 'Edmonton Oilers', league: 'NHL', conference: 'West', division: 'Pacific' },
-        { name: 'Toronto Maple Leafs', league: 'NHL', conference: 'East', division: 'Atlantic' },
-        { name: 'Colorado Avalanche', league: 'NHL', conference: 'West', division: 'Central' },
-        { name: 'New York Rangers', league: 'NHL', conference: 'East', division: 'Metropolitan' }
-    ];
-
-    const playerStats = {
-        'LeBron James': { ppg: 25.7, threePct: 38.6, fgPct: 54.1, ast: 8.3, usg: 32.1, ts: 61.2 },
-        'Stephen Curry': { ppg: 27.4, threePct: 41.2, fgPct: 47.8, ast: 5.1, usg: 30.4, ts: 64.3 },
-        'Giannis Antetokounmpo': { ppg: 30.1, threePct: 29.1, fgPct: 57.8, ast: 6.3, usg: 33.8, ts: 61.8 },
-        'Kevin Durant': { ppg: 28.2, threePct: 39.4, fgPct: 53.1, ast: 5.2, usg: 29.7, ts: 62.5 },
-        'Patrick Mahomes': { ppg: 28.8, threePct: 0, fgPct: 0, ast: 6.2, usg: 31.2, ts: 0 },
-        'Josh Allen': { ppg: 27.1, threePct: 0, fgPct: 0, ast: 6.0, usg: 30.1, ts: 0 },
-        'Justin Jefferson': { ppg: 23.4, threePct: 0, fgPct: 0, ast: 2.1, usg: 28.7, ts: 0 },
-        'Aaron Rodgers': { ppg: 24.6, threePct: 0, fgPct: 0, ast: 5.4, usg: 27.2, ts: 0 },
-        'Mookie Betts': { ppg: 22.1, threePct: 0, fgPct: 0, ast: 4.8, usg: 27.5, ts: 0 },
-        'Shohei Ohtani': { ppg: 24.0, threePct: 0, fgPct: 0, ast: 4.4, usg: 29.3, ts: 0 },
-        'Ronald Acuna Jr.': { ppg: 23.5, threePct: 0, fgPct: 0, ast: 4.2, usg: 28.0, ts: 0 },
-        'Mike Trout': { ppg: 21.8, threePct: 0, fgPct: 0, ast: 3.8, usg: 26.4, ts: 0 },
-        'Connor McDavid': { ppg: 26.4, threePct: 0, fgPct: 0, ast: 7.1, usg: 29.1, ts: 0 },
-        'Auston Matthews': { ppg: 24.3, threePct: 0, fgPct: 0, ast: 4.5, usg: 28.6, ts: 0 },
-        'Cale Makar': { ppg: 21.4, threePct: 0, fgPct: 0, ast: 5.2, usg: 25.2, ts: 0 },
-        'Sidney Crosby': { ppg: 22.9, threePct: 0, fgPct: 0, ast: 6.3, usg: 27.1, ts: 0 }
+    const leaguePositions = {
+        NBA: ['Point Guard', 'Shooting Guard', 'Small Forward', 'Power Forward', 'Center'],
+        NFL: ['Quarterback', 'Running Back', 'Wide Receiver', 'Tight End', 'Defensive Line', 'Linebacker', 'Cornerback', 'Safety'],
+        MLB: ['Pitcher', 'Catcher', 'First Base', 'Second Base', 'Third Base', 'Shortstop', 'Left Field', 'Center Field', 'Right Field', 'Designated Hitter']
     };
 
-    const teamStats = {
-        'Boston Celtics': { winPct: 62.4, net: 7.8, ppg: 118.4, opp: 109.1, pace: 98.6, ortg: 119.5, drtg: 111.7, tov: 12.4 },
-        'Milwaukee Bucks': { winPct: 58.1, net: 5.1, ppg: 116.1, opp: 110.2, pace: 99.4, ortg: 117.8, drtg: 112.7, tov: 13.1 },
-        'Phoenix Suns': { winPct: 56.0, net: 4.6, ppg: 115.2, opp: 110.6, pace: 97.9, ortg: 116.2, drtg: 111.6, tov: 12.9 },
-        'Denver Nuggets': { winPct: 59.3, net: 6.2, ppg: 114.6, opp: 108.7, pace: 97.4, ortg: 116.1, drtg: 109.9, tov: 12.2 },
-        'Kansas City Chiefs': { winPct: 62.5, net: 6.8, ppg: 26.3, opp: 20.9, pace: 62.3, ortg: 0, drtg: 0, tov: 1.2 },
-        'Buffalo Bills': { winPct: 61.2, net: 5.9, ppg: 27.1, opp: 21.4, pace: 63.1, ortg: 0, drtg: 0, tov: 1.1 },
-        'Dallas Cowboys': { winPct: 58.6, net: 4.3, ppg: 25.6, opp: 22.1, pace: 62.9, ortg: 0, drtg: 0, tov: 1.3 },
-        'San Francisco 49ers': { winPct: 63.0, net: 7.1, ppg: 27.8, opp: 20.4, pace: 61.8, ortg: 0, drtg: 0, tov: 1.0 },
-        'Los Angeles Dodgers': { winPct: 60.4, net: 3.2, ppg: 5.2, opp: 4.4, pace: 0, ortg: 0, drtg: 0, tov: 0 },
-        'Atlanta Braves': { winPct: 59.1, net: 2.9, ppg: 5.0, opp: 4.3, pace: 0, ortg: 0, drtg: 0, tov: 0 },
-        'New York Yankees': { winPct: 57.6, net: 2.5, ppg: 4.8, opp: 4.2, pace: 0, ortg: 0, drtg: 0, tov: 0 },
-        'Houston Astros': { winPct: 58.7, net: 2.7, ppg: 4.9, opp: 4.3, pace: 0, ortg: 0, drtg: 0, tov: 0 },
-        'Edmonton Oilers': { winPct: 56.3, net: 5.4, ppg: 3.6, opp: 2.9, pace: 0, ortg: 0, drtg: 0, tov: 0 },
-        'Toronto Maple Leafs': { winPct: 54.9, net: 4.2, ppg: 3.4, opp: 3.0, pace: 0, ortg: 0, drtg: 0, tov: 0 },
-        'Colorado Avalanche': { winPct: 55.7, net: 4.8, ppg: 3.5, opp: 3.0, pace: 0, ortg: 0, drtg: 0, tov: 0 },
-        'New York Rangers': { winPct: 53.8, net: 3.6, ppg: 3.2, opp: 2.9, pace: 0, ortg: 0, drtg: 0, tov: 0 }
+    const nbaSchema = [
+        'G', 'GS', 'MP', 'PTS', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', '2P', '2PA', '2P%', 'eFG%', 'FT', 'FTA', 'FT%',
+        'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', '2Dbl', 'Trp-Dbl'
+    ];
+
+    const nflSchema = {
+        QB: ['GP', 'Pass Yds', 'Pass TD', 'INT', 'Comp %', 'Att', 'Sacks', 'Rush Yds/TD', 'Y/A', 'TD%', 'INT%', 'Passer Rating'],
+        RB: ['Carries', 'Rush Yds', 'Rush TD', 'Rec', 'Rec Yds', 'Touches', 'YPC', 'YAC'],
+        WRTE: ['Targets', 'Rec', 'Rec Yds', 'TD', 'Drops'],
+        DLLB: ['Tackles', 'Sacks', 'Pressures', 'Forced Fumbles'],
+        CBS: ['Tackles', 'Sacks', 'Pressures', 'INT', 'Forced Fumbles', 'Pat downs']
+    };
+
+    const mlbSchema = {
+        PITCHER: ['G', 'GS', 'IP', 'W', 'L', 'ERA', 'WHIP', 'SO', 'BB', 'H', 'HR'],
+        HITTER: ['G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'BB', 'SO', 'SB', 'AVG', 'OBP', 'SLG', 'OPS']
     };
 
     const state = {
-        mode: 'player',
-        league: '',
-        leftSelection: '',
-        rightSelection: ''
+        league: 'NBA',
+        leftPosition: 'Small Forward',
+        rightPosition: 'Power Forward',
+        season: '2023-24 Season',
+        statView: 'stats',
+        gameTab: 'L10',
+        showAllGames: false
     };
 
     content.innerHTML = `
-        <div class="max-w-[1200px] mx-auto p-6 flex flex-col gap-6 fade-in">
-            <section class="flex flex-col gap-6">
-                <div class="flex flex-wrap justify-between items-end gap-4">
-                    <div class="flex flex-col gap-1">
-                        <h1 class="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-tight">Compare Entities</h1>
-                        <p class="text-slate-500 dark:text-[#92a4c9] text-sm">Build side-by-side performance queries instantly</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button id="clear-compare" class="flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-[#232f48] text-slate-700 dark:text-white rounded-lg text-sm font-bold hover:bg-slate-300 dark:hover:bg-[#324467] transition-all">
-                            <span class="material-symbols-outlined text-lg">delete</span>
-                            <span>Clear All</span>
-                        </button>
-                        <button id="save-compare" class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all active:scale-95">
-                            <span class="material-symbols-outlined text-lg">save</span>
-                            <span>Save Report</span>
-                        </button>
-                    </div>
-                </div>
+        <style>
+            .h2h-show-scrollbar::-webkit-scrollbar { height: 8px; }
+            .h2h-show-scrollbar::-webkit-scrollbar-track { background: transparent; }
+            .h2h-show-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
+            .h2h-show-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+            .h2h-show-scrollbar { scrollbar-width: thin; scrollbar-color: #334155 transparent; }
 
-                <div class="bg-white dark:bg-[#192233] p-6 rounded-xl border border-slate-200 dark:border-[#232f48] shadow-sm">
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                        <div class="lg:col-span-3">
-                            <p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase tracking-wider mb-3">Comparison Scope</p>
-                            <div class="flex h-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#232f48] p-1">
-                                ${scopeOptions.map((option) => `
-                                    <button data-scope="${option.id}" class="scope-toggle flex h-full grow items-center justify-center rounded-lg px-2 text-xs font-bold transition-colors ${option.id === 'player' ? 'bg-white dark:bg-background-dark shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 dark:text-[#92a4c9] hover:text-slate-900 dark:hover:text-white'}">${option.label}</button>
-                                `).join('')}
-                            </div>
-                        </div>
+            .h2h-split-scroll-lock {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                touch-action: pan-y;
+            }
 
-                        <div class="lg:col-span-9 flex flex-wrap sm:flex-nowrap gap-4 items-center">
-                            <div class="flex-1 min-w-[200px]">
-                                <p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase tracking-wider mb-3">Entity A</p>
-                                <div class="relative group">
-                                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary">person</span>
-                                    <input id="player-left" class="w-full pl-12 pr-4 py-3 rounded-lg border border-slate-200 dark:border-[#324467] bg-slate-50 dark:bg-[#111722] text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="Select league first..." disabled />
-                                    <div id="player-left-list" role="listbox" class="absolute top-full mt-2 w-full rounded-xl border border-slate-200 dark:border-[#232f48] bg-white dark:bg-[#111722] shadow-sm z-20 hidden max-h-64 overflow-y-auto"></div>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-center pt-7">
-                                <span class="text-slate-400 font-black text-xl italic">VS</span>
-                            </div>
-                            <div class="flex-1 min-w-[200px]">
-                                <p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase tracking-wider mb-3">Entity B</p>
-                                <div class="relative group">
-                                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary">person</span>
-                                    <input id="player-right" class="w-full pl-12 pr-4 py-3 rounded-lg border border-slate-200 dark:border-[#324467] bg-slate-50 dark:bg-[#111722] text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="Select league first..." disabled />
-                                    <div id="player-right-list" role="listbox" class="absolute top-full mt-2 w-full rounded-xl border border-slate-200 dark:border-[#232f48] bg-white dark:bg-[#111722] shadow-sm z-20 hidden max-h-64 overflow-y-auto"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            .h2h-split-scroll-lock::-webkit-scrollbar {
+                display: none;
+            }
 
-                    <div class="flex flex-wrap gap-3 mt-6 pt-6 border-t border-slate-100 dark:border-[#232f48]">
-                        <div class="relative">
-                            <select id="compare-league" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-[#324467] bg-white dark:bg-[#111722] text-xs font-semibold text-slate-600 dark:text-[#92a4c9]">
-                                <option value="" selected>Select League</option>
-                                ${leagueOptions.map((league) => `<option value="${league}">${league}</option>`).join('')}
+            .h2h-section-title {
+                font-size: 1.125rem;
+                line-height: 1.75rem;
+                font-weight: 900;
+                letter-spacing: -0.01em;
+                color: rgb(15 23 42);
+            }
+
+            .dark .h2h-section-title {
+                color: rgb(248 250 252);
+            }
+
+            .h2h-col-highlight {
+                background-color: rgba(241, 245, 249, 0.03);
+            }
+
+            .dark .h2h-col-highlight {
+                background-color: rgba(255, 255, 255, 0.02);
+            }
+
+            .h2h-table th,
+            .h2h-table td {
+                white-space: nowrap;
+            }
+
+            .h2h-table th {
+                font-size: 10px;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: rgb(100 116 139);
+            }
+
+            .h2h-table td {
+                font-size: 12px;
+                color: rgb(15 23 42);
+            }
+
+            .dark .h2h-table td {
+                color: rgb(226 232 240);
+            }
+        </style>
+
+        <div class="max-w-7xl mx-auto px-4 py-8 space-y-8 fade-in">
+            <section class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div class="flex flex-col lg:flex-row gap-6 items-end">
+                    <div class="flex-1 space-y-3">
+                        <div>
+                            <select id="h2h-league-select" aria-label="Select league" class="bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg text-sm w-32 focus:ring-primary">
+                                <option value="NBA" selected>NBA</option>
+                                <option value="NFL">NFL</option>
+                                <option value="MLB">MLB</option>
                             </select>
                         </div>
-                        <button class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-[#324467] flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-[#92a4c9] hover:bg-slate-50 dark:hover:bg-[#232f48]">
-                            <span class="material-symbols-outlined text-sm">calendar_today</span>
-                            <span>Last 10 Games</span>
-                            <span class="material-symbols-outlined text-sm">expand_more</span>
-                        </button>
-                        <button class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-[#324467] flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-[#92a4c9] hover:bg-slate-50 dark:hover:bg-[#232f48]">
-                            <span class="material-symbols-outlined text-sm">location_on</span>
-                            <span>All Venues</span>
-                            <span class="material-symbols-outlined text-sm">expand_more</span>
-                        </button>
-                        <button class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-[#324467] flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-[#92a4c9] hover:bg-slate-50 dark:hover:bg-[#232f48]">
-                            <span class="material-symbols-outlined text-sm">history</span>
-                            <span>Regular Season 23/24</span>
-                            <span class="material-symbols-outlined text-sm">expand_more</span>
-                        </button>
+                        <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1 w-fit" role="tablist" aria-label="Left compare mode">
+                            <button aria-selected="true" class="px-3 py-1 bg-primary text-white rounded-md text-xs font-semibold shadow-sm" role="tab" type="button">Player</button>
+                            <button aria-selected="false" class="px-3 py-1 text-xs font-medium opacity-60" role="tab" type="button">Team</button>
+                        </div>
+                        <div class="flex gap-2">
+                            <select id="h2h-left-position" aria-label="Select player A position" class="bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg text-sm w-44 focus:ring-primary"></select>
+                            <input id="h2h-left-player" class="bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg text-sm w-full focus:ring-primary" placeholder="Search Player A..." type="text" value="LeBron James" />
+                        </div>
+                    </div>
+
+                    <div class="hidden lg:flex items-center justify-center py-2 px-2">
+                        <span class="text-xl font-black text-slate-300 dark:text-slate-600 italic">VS</span>
+                    </div>
+
+                    <div class="flex-1 space-y-3">
+                        <div class="h-[38px]"></div>
+                        <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1 w-fit" role="tablist" aria-label="Right compare mode">
+                            <button aria-selected="true" class="px-3 py-1 bg-primary text-white rounded-md text-xs font-semibold shadow-sm" role="tab" type="button">Player</button>
+                            <button aria-selected="false" class="px-3 py-1 text-xs font-medium opacity-60" role="tab" type="button">Team</button>
+                        </div>
+                        <div class="flex gap-2">
+                            <select id="h2h-right-position" aria-label="Select player B position" class="bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg text-sm w-44 focus:ring-primary"></select>
+                            <input id="h2h-right-player" class="bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-lg text-sm w-full focus:ring-primary" placeholder="Search Player B..." type="text" value="Kevin Durant" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex items-center gap-3">
+                    <button id="h2h-compare-btn" class="bg-primary hover:bg-blue-600 text-white px-5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide flex items-center gap-1.5 transition-all shadow-md shadow-blue-500/20" type="button">
+                        <span class="material-symbols-outlined text-sm">search</span>
+                        Compare Stats
+                    </button>
+                    <p id="h2h-feedback" class="text-xs text-orange-400 font-semibold hidden"></p>
+                </div>
+            </section>
+
+            <section class="space-y-3">
+                <h3 class="h2h-section-title flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-lg">insights</span>
+                    Head-to-Head Comparison
+                </h3>
+                <div class="bg-[#111827] text-white p-8 rounded-2xl shadow-2xl relative overflow-hidden border border-slate-800">
+                    <div class="grid grid-cols-3 gap-8 items-start mb-10">
+                        <div class="flex flex-col items-center text-center gap-3">
+                            <img alt="Player A" class="w-20 h-20 rounded-full border-2 border-primary object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD916xGAXKiQ5A6lHLS1-YYoWCyIvU4-rigNJQS5f7ufIOxMc0bAIYiL2pPadaayrnES2A31iKcO-cHIkSD5Nj2oPXbQZJGnFTyHPY6tAA34WwrlfehXWGt3ugVb7-ectJiHhppDlsrLRMaZAhPzm6XdaXsN4Ve-k410TLrxWqqAZweXRb4xl7RWb1ovTycVdbbBq0uQ1IFq7MF7ELbC98PB3H7jYDSb7K0nVtDe6kqfbPM5xxntFgpGUZbnjtFlHnAzRY0gwn3-nA" />
+                            <div>
+                                <div id="h2h-left-hero-name" class="text-lg font-bold">LeBron James</div>
+                                <div id="h2h-left-hero-meta" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">NBA | SMALL FORWARD</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center h-full">
+                            <span class="text-4xl font-black text-slate-800 italic">VS</span>
+                        </div>
+                        <div class="flex flex-col items-center text-center gap-3">
+                            <img alt="Player B" class="w-20 h-20 rounded-full border-2 border-slate-700 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRdWLw23lfYLinZrYSSIU__GlJekkaZTmvWQFPcPnll3WMyJ__-2xbSqhp3VSsbkFpGJPpkCUTDWVNMjf1ieNxki6oKHRXPMk0qBcKtrbByeHFoQpxMsxJFGHbY21z2DLjeigZEA8lqrYfLVVE_tRLhzyXKb2sDoEWiwZv69raripeykBRfwz7fwYV4ABZrThxBRR-H2WhszyBRWWEk5p5fC2AxMVJy1ikPnETRCiMBlS_U44ngfsH2cEh8-3jaqduA_0E_qtLA3M" />
+                            <div>
+                                <div id="h2h-right-hero-name" class="text-lg font-bold">Kevin Durant</div>
+                                <div id="h2h-right-hero-meta" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">NBA | POWER FORWARD</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8 max-w-4xl mx-auto">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-end text-sm font-bold">
+                                <span>25.7</span>
+                                <span class="text-slate-500 tracking-widest">PPG</span>
+                                <span>27.1</span>
+                            </div>
+                            <div class="flex gap-2 h-1.5">
+                                <div class="flex-1 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-primary" style="width: 85%"></div></div>
+                                <div class="flex-1 bg-slate-800 rounded-full overflow-hidden flex justify-end"><div class="h-full bg-slate-400" style="width: 90%"></div></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-end text-sm font-bold">
+                                <span>54.2%</span>
+                                <span class="text-slate-500 tracking-widest">FG%</span>
+                                <span>52.8%</span>
+                            </div>
+                            <div class="flex gap-2 h-1.5">
+                                <div class="flex-1 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-primary" style="width: 95%"></div></div>
+                                <div class="flex-1 bg-slate-800 rounded-full overflow-hidden flex justify-end"><div class="h-full bg-slate-400" style="width: 88%"></div></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-end text-sm font-bold">
+                                <span>7.3</span>
+                                <span class="text-slate-500 tracking-widest">APG</span>
+                                <span>5.0</span>
+                            </div>
+                            <div class="flex gap-2 h-1.5">
+                                <div class="flex-1 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-primary" style="width: 78%"></div></div>
+                                <div class="flex-1 bg-slate-800 rounded-full overflow-hidden flex justify-end"><div class="h-full bg-slate-400" style="width: 55%"></div></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white dark:bg-[#192233] rounded-xl overflow-hidden border border-slate-200 dark:border-[#232f48] shadow-sm">
-                    <div class="p-4 border-b border-slate-100 dark:border-[#232f48]">
-                        <p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase tracking-wider mb-3">Comparison Scope</p>
-                        <div class="flex h-10 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#232f48] p-1">
-                            ${scopeOptions.map((option) => `
-                                <button data-scope="${option.id}" class="scope-toggle-pane flex h-full grow items-center justify-center rounded-lg px-2 text-xs font-bold transition-colors ${option.id === 'player' ? 'bg-white dark:bg-background-dark shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 dark:text-[#92a4c9] hover:text-slate-900 dark:hover:text-white'}">${option.label}</button>
-                            `).join('')}
-                        </div>
+            <section class="space-y-3">
+                <h3 class="h2h-section-title">Averages</h3>
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="relative">
+                        <select id="h2h-season-select" aria-label="Select season" class="appearance-none bg-slate-100 dark:bg-slate-800 pl-8 pr-8 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 dark:border-slate-700 focus:ring-primary cursor-pointer">
+                            <option>2023-24 Season</option>
+                            <option>2022-23 Season</option>
+                            <option>2021-22 Season</option>
+                        </select>
+                        <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-xs pointer-events-none">calendar_today</span>
+                        <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-sm pointer-events-none opacity-60">expand_more</span>
                     </div>
-                    <div id="entity-left-card"></div>
+
+                    <div class="flex bg-slate-100 dark:bg-slate-800 rounded-full p-1 border border-slate-200 dark:border-slate-700">
+                        <button id="h2h-stats-tab" class="px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary text-white shadow-sm" type="button">Stats</button>
+                        <button id="h2h-diff-tab" class="px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider opacity-60" type="button">Differentials</button>
+                    </div>
                 </div>
-                <div class="bg-white dark:bg-[#192233] rounded-xl overflow-hidden border border-slate-200 dark:border-[#232f48] shadow-sm">
-                    <div class="p-4 border-b border-slate-100 dark:border-[#232f48]">
-                        <p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase tracking-wider mb-3">Comparison Scope</p>
-                        <div class="flex h-10 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#232f48] p-1">
-                            ${scopeOptions.map((option) => `
-                                <button data-scope="${option.id}" class="scope-toggle-pane flex h-full grow items-center justify-center rounded-lg px-2 text-xs font-bold transition-colors ${option.id === 'player' ? 'bg-white dark:bg-background-dark shadow-sm text-slate-900 dark:text-white' : 'text-slate-400 dark:text-[#92a4c9] hover:text-slate-900 dark:hover:text-white'}">${option.label}</button>
-                            `).join('')}
-                        </div>
+
+                <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+                    <div id="h2h-averages-scroll" class="overflow-x-auto h2h-show-scrollbar">
+                        <div id="h2h-averages-wrap" class="min-w-[1200px]"></div>
                     </div>
-                    <div id="entity-right-card"></div>
                 </div>
             </section>
 
-            <section class="bg-white dark:bg-[#192233] rounded-xl border border-slate-200 dark:border-[#232f48] shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-100 dark:border-[#232f48] flex justify-between items-center">
-                    <h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">data_thresholding</span>
-                        Delta Analysis
-                    </h4>
-                    <span class="text-[10px] font-bold bg-primary/10 text-primary px-2 py-1 rounded uppercase tracking-tighter">Live Engine</span>
+            <section class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="h2h-section-title flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-base">history</span>
+                        Versus-Game Log
+                    </h3>
+                    <div class="flex bg-slate-100 dark:bg-slate-800 rounded-full p-1 border border-slate-200 dark:border-slate-700">
+                        <button data-game-tab="L10" class="h2h-game-tab px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary text-white shadow-sm" type="button">L10</button>
+                        <button data-game-tab="Playoffs" class="h2h-game-tab px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider opacity-60" type="button">Playoffs</button>
+                        <button data-game-tab="All-Time" class="h2h-game-tab px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider opacity-60" type="button">All-Time</button>
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 dark:bg-[#111722]">
-                                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-[#92a4c9] uppercase tracking-wider">Statistic</th>
-                                <th id="delta-left-label" class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-[#92a4c9] uppercase tracking-wider text-center">Entity A</th>
-                                <th id="delta-right-label" class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-[#92a4c9] uppercase tracking-wider text-center">Entity B</th>
-                                <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-[#92a4c9] uppercase tracking-wider text-right">Delta</th>
-                            </tr>
-                        </thead>
-                        <tbody id="delta-rows" class="divide-y divide-slate-100 dark:divide-[#232f48]"></tbody>
-                    </table>
+
+                <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-px bg-slate-200 dark:bg-slate-800">
+                        <div class="bg-white dark:bg-surface-dark">
+                            <div id="h2h-gamelog-left-name" class="sticky top-0 z-40 px-4 py-2 text-xs font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark">
+                                Player A
+                            </div>
+                            <div id="h2h-gamelog-left-scroll" class="overflow-x-auto h2h-split-scroll-lock">
+                                <div id="h2h-gamelog-left-wrap"></div>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-surface-dark">
+                            <div id="h2h-gamelog-right-name" class="sticky top-0 z-40 px-4 py-2 text-xs font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark">
+                                Player B
+                            </div>
+                            <div id="h2h-gamelog-right-scroll" class="overflow-x-auto h2h-split-scroll-lock">
+                                <div id="h2h-gamelog-right-wrap"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="h2h-gamelog-sync" class="overflow-x-auto h2h-show-scrollbar border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+                        <div id="h2h-gamelog-sync-width" class="h-3"></div>
+                    </div>
                 </div>
-                <div class="px-6 py-4 bg-slate-50 dark:bg-[#111722] flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm text-primary">info</span>
-                    <p class="text-[11px] font-medium text-slate-500 dark:text-[#92a4c9]">Delta is calculated as (Entity A - Entity B). Positive values indicate Entity A advantage.</p>
+
+                <div class="flex justify-end">
+                    <button id="h2h-show-games" class="text-primary hover:underline text-xs font-bold flex items-center gap-1" type="button">
+                        Show All Games
+                        <span class="material-symbols-outlined text-sm">chevron_right</span>
+                    </button>
                 </div>
             </section>
 
-            <section class="bg-white dark:bg-[#192233] rounded-xl border border-slate-200 dark:border-[#232f48] shadow-sm p-6 mb-10">
-                <div class="flex justify-between items-center mb-6">
-                    <h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">show_chart</span>
-                        Efficiency Trajectory (Last 15 Games)
-                    </h4>
-                    <div class="flex gap-4">
-                        <div class="flex items-center gap-2">
-                            <span class="size-2 rounded-full bg-primary"></span>
-                            <span class="text-[11px] font-bold text-slate-500 dark:text-[#92a4c9]">Entity A</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="size-2 rounded-full bg-slate-400"></span>
-                            <span class="text-[11px] font-bold text-slate-500 dark:text-[#92a4c9]">Entity B</span>
-                        </div>
+            <section class="space-y-3">
+                <h3 class="h2h-section-title flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm text-primary">filter_list</span>
+                    Contextual Analysis
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 group hover:border-primary/50 transition-all cursor-pointer">
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform"><span class="material-symbols-outlined">home</span></div>
+                        <h4 class="text-lg font-bold mb-2 text-slate-900 dark:text-white">Home vs Away</h4>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Compare performance splits based on venue location and crowd impact.</p>
                     </div>
-                </div>
-                <div class="h-48 w-full relative overflow-hidden flex items-end gap-1">
-                    <div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
-                        <div class="w-full h-px bg-slate-400 dark:bg-[#92a4c9]"></div>
-                        <div class="w-full h-px bg-slate-400 dark:bg-[#92a4c9]"></div>
-                        <div class="w-full h-px bg-slate-400 dark:bg-[#92a4c9]"></div>
-                        <div class="w-full h-px bg-slate-400 dark:bg-[#92a4c9]"></div>
+                    <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 group hover:border-primary/50 transition-all cursor-pointer">
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform"><span class="material-symbols-outlined">trending_up</span></div>
+                        <h4 class="text-lg font-bold mb-2 text-slate-900 dark:text-white">Vs Teams Above .500</h4>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Evaluate clutch performance against elite-level competition.</p>
                     </div>
-                    <div class="flex-1 h-full flex items-end justify-center relative">
-                        <div class="w-1/2 bg-primary/20 absolute bottom-1/3 h-1/2 rounded-full"></div>
-                        <div class="w-1/4 bg-primary h-[80%] rounded-full absolute bottom-4"></div>
+                    <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 group hover:border-primary/50 transition-all cursor-pointer">
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform"><span class="material-symbols-outlined">hotel</span></div>
+                        <h4 class="text-lg font-bold mb-2 text-slate-900 dark:text-white">Rest Days</h4>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Analysis of production on back-to-backs vs multi-day breaks.</p>
                     </div>
-                    <div class="flex-1 h-full flex items-end justify-center relative">
-                        <div class="w-1/2 bg-slate-400/20 absolute bottom-1/4 h-1/3 rounded-full"></div>
-                        <div class="w-1/4 bg-slate-400 h-[60%] rounded-full absolute bottom-4"></div>
-                    </div>
-                    <div class="flex-1 h-full flex items-end justify-center relative">
-                        <div class="w-full h-full bg-gradient-to-t from-primary/10 to-transparent rounded-t-lg"></div>
-                        <div class="absolute bottom-[70%] left-0 w-full h-[2px] bg-primary shadow-[0_0_8px_rgba(19,91,236,0.5)]"></div>
-                        <div class="absolute bottom-[50%] left-0 w-full h-[2px] bg-slate-400/50"></div>
-                    </div>
-                </div>
-                <div class="flex justify-between mt-4 text-[10px] font-bold text-slate-400 dark:text-[#92a4c9] px-2">
-                    <span>OCT 25</span>
-                    <span>NOV 10</span>
-                    <span>NOV 25</span>
-                    <span>DEC 10</span>
-                    <span>DEC 25</span>
                 </div>
             </section>
         </div>
     `;
 
-    const leftInput = document.getElementById('player-left');
-    const rightInput = document.getElementById('player-right');
-    const leftList = document.getElementById('player-left-list');
-    const rightList = document.getElementById('player-right-list');
-    const scopeButtons = Array.from(document.querySelectorAll('.scope-toggle'));
-    const scopeButtonsPane = Array.from(document.querySelectorAll('.scope-toggle-pane'));
-    const leagueSelect = document.getElementById('compare-league');
-    const entityLeftCard = document.getElementById('entity-left-card');
-    const entityRightCard = document.getElementById('entity-right-card');
-    const deltaRows = document.getElementById('delta-rows');
-    const deltaLeftLabel = document.getElementById('delta-left-label');
-    const deltaRightLabel = document.getElementById('delta-right-label');
+    const leagueSelect = document.getElementById('h2h-league-select');
+    const leftPositionSelect = document.getElementById('h2h-left-position');
+    const rightPositionSelect = document.getElementById('h2h-right-position');
+    const leftPlayerInput = document.getElementById('h2h-left-player');
+    const rightPlayerInput = document.getElementById('h2h-right-player');
+    const compareButton = document.getElementById('h2h-compare-btn');
+    const feedback = document.getElementById('h2h-feedback');
+    const leftHeroName = document.getElementById('h2h-left-hero-name');
+    const leftHeroMeta = document.getElementById('h2h-left-hero-meta');
+    const rightHeroName = document.getElementById('h2h-right-hero-name');
+    const rightHeroMeta = document.getElementById('h2h-right-hero-meta');
+    const seasonSelect = document.getElementById('h2h-season-select');
+    const statsTab = document.getElementById('h2h-stats-tab');
+    const diffTab = document.getElementById('h2h-diff-tab');
+    const averagesWrap = document.getElementById('h2h-averages-wrap');
+    const gameLogLeftWrap = document.getElementById('h2h-gamelog-left-wrap');
+    const gameLogRightWrap = document.getElementById('h2h-gamelog-right-wrap');
+    const gameLogLeftName = document.getElementById('h2h-gamelog-left-name');
+    const gameLogRightName = document.getElementById('h2h-gamelog-right-name');
+    const gameLogLeftScroll = document.getElementById('h2h-gamelog-left-scroll');
+    const gameLogRightScroll = document.getElementById('h2h-gamelog-right-scroll');
+    const gameLogSyncScroll = document.getElementById('h2h-gamelog-sync');
+    const gameLogSyncWidth = document.getElementById('h2h-gamelog-sync-width');
+    const showGamesButton = document.getElementById('h2h-show-games');
+    let gameLogMaxScroll = 0;
 
-    const getInitials = (name) => name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase();
-
-    const formatPercent = (value) => `${value.toFixed(1)}%`;
-
-    const computeSeed = (label) => label.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-
-    const getTeamMetrics = (teamName) => {
-        if (teamStats[teamName]) return teamStats[teamName];
-        const seed = computeSeed(teamName);
-        return {
-            winPct: 50 + (seed % 15),
-            net: (seed % 10) - 2,
-            ppg: 105 + (seed % 20),
-            opp: 100 + (seed % 18),
-            pace: 95 + (seed % 8),
-            ortg: 110 + (seed % 10),
-            drtg: 105 + (seed % 10),
-            tov: 12 + (seed % 3)
-        };
-    };
-
-    const getPlayerMetrics = (playerName) => {
-        return playerStats[playerName] || { ppg: 0, threePct: 0, fgPct: 0, ast: 0, usg: 0, ts: 0 };
-    };
-
-    const getListByMode = (league) => {
-        if (!league) return [];
-        return state.mode === 'team'
-            ? teamDirectory.filter((team) => team.league === league)
-            : playerDirectory.filter((player) => player.league === league);
-    };
-
-    const renderDropdown = (listElement, items, highlightedIndex) => {
-        listElement.innerHTML = items
-            .map((item, index) => {
-                const isActive = index === highlightedIndex;
-                const subtitle = state.mode === 'team'
-                    ? `${item.conference} • ${item.division}`
-                    : `${item.team} • ${item.position}`;
-                return `
-                    <button type="button" role="option" aria-selected="${isActive ? 'true' : 'false'}" data-value="${item.name}"
-                        class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition-colors ${isActive ? 'bg-primary/15 text-white' : 'text-slate-700 dark:text-[#92a4c9] hover:bg-slate-100 dark:hover:bg-[#232f48]'}">
-                        <div>
-                            <p class="font-semibold">${item.name}</p>
-                            <p class="text-[10px] text-slate-400 dark:text-[#92a4c9] uppercase tracking-wider">${subtitle}</p>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-[#232f48] text-slate-500 dark:text-[#92a4c9] px-2 py-1 rounded-full">${item.league}</span>
-                    </button>
-                `;
-            })
-            .join('');
-        listElement.classList.toggle('hidden', items.length === 0);
-    };
-
-    const setupTypeahead = (inputElement, listElement, side) => {
-        let available = [];
-        let filtered = [];
-        let highlighted = -1;
-
-        const close = () => {
-            listElement.classList.add('hidden');
-            inputElement.setAttribute('aria-expanded', 'false');
-            highlighted = -1;
-        };
-
-        const open = () => {
-            if (!filtered.length) {
-                close();
-                return;
-            }
-            listElement.classList.remove('hidden');
-            inputElement.setAttribute('aria-expanded', 'true');
-        };
-
-        const render = () => {
-            renderDropdown(listElement, filtered, highlighted);
-            open();
-            listElement.querySelectorAll('[data-value]').forEach((button) => {
-                button.addEventListener('click', () => {
-                    const value = button.dataset.value;
-                    inputElement.value = value;
-                    if (side === 'left') state.leftSelection = value;
-                    if (side === 'right') state.rightSelection = value;
-                    close();
-                    renderComparison();
-                });
-            });
-        };
-
-        const setItems = (items) => {
-            available = items;
-            filtered = items;
-            highlighted = items.length ? 0 : -1;
-            render();
-        };
-
-        inputElement.addEventListener('input', (event) => {
-            const query = event.target.value.trim().toLowerCase();
-            filtered = available.filter((item) => item.name.toLowerCase().includes(query));
-            highlighted = filtered.length ? 0 : -1;
-            render();
-        });
-
-        inputElement.addEventListener('focus', () => {
-            filtered = available;
-            render();
-        });
-
-        inputElement.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowDown') {
-                event.preventDefault();
-                if (!filtered.length) return;
-                highlighted = (highlighted + 1) % filtered.length;
-                render();
-                return;
-            }
-            if (event.key === 'ArrowUp') {
-                event.preventDefault();
-                if (!filtered.length) return;
-                highlighted = (highlighted - 1 + filtered.length) % filtered.length;
-                render();
-                return;
-            }
-            if (event.key === 'Enter') {
-                if (filtered.length && highlighted >= 0) {
-                    event.preventDefault();
-                    const value = filtered[highlighted].name;
-                    inputElement.value = value;
-                    if (side === 'left') state.leftSelection = value;
-                    if (side === 'right') state.rightSelection = value;
-                    close();
-                    renderComparison();
-                }
-            }
-            if (event.key === 'Escape') {
-                close();
-            }
-        });
-
-        document.addEventListener('click', (event) => {
-            if (!listElement.contains(event.target) && event.target !== inputElement) {
-                close();
-            }
-        });
-
-        return { setItems, close };
-    };
-
-    const leftTypeahead = setupTypeahead(leftInput, leftList, 'left');
-    const rightTypeahead = setupTypeahead(rightInput, rightList, 'right');
-
-    const updateScopeButtons = () => {
-        [...scopeButtons, ...scopeButtonsPane].forEach((button) => {
-            const isActive = button.dataset.scope === state.mode;
-            button.classList.toggle('bg-white', isActive);
-            button.classList.toggle('dark:bg-background-dark', isActive);
-            button.classList.toggle('shadow-sm', isActive);
-            button.classList.toggle('text-slate-900', isActive);
-            button.classList.toggle('dark:text-white', isActive);
-            button.classList.toggle('text-slate-400', !isActive);
-            button.classList.toggle('dark:text-[#92a4c9]', !isActive);
-        });
-    };
-
-    const renderEntityCard = (container, selection) => {
-        if (!selection) {
-            container.innerHTML = '<p class="text-slate-500 dark:text-[#92a4c9] text-sm p-6">Select an entity to view summary stats.</p>';
+    const setFeedback = (message = '') => {
+        if (!feedback) return;
+        if (!message) {
+            feedback.textContent = '';
+            feedback.classList.add('hidden');
             return;
         }
-        if (state.mode === 'team') {
-            const team = teamDirectory.find((entry) => entry.name === selection);
-            const metrics = getTeamMetrics(selection);
-            container.innerHTML = `
-                <div class="p-6 bg-primary/5 dark:bg-white/[0.02] border-b border-slate-100 dark:border-[#232f48] flex items-center gap-4">
-                    <div class="size-16 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">${getInitials(selection)}</div>
-                    <div>
-                        <h3 class="text-xl font-bold dark:text-white">${selection}</h3>
-                        <p class="text-slate-500 dark:text-[#92a4c9] text-sm">${team?.conference} • ${team?.division}</p>
-                    </div>
-                </div>
-                <div class="p-6 grid grid-cols-2 gap-4">
-                    <div class="bg-slate-50 dark:bg-[#111722] p-4 rounded-lg">
-                        <p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase mb-1">Win %</p>
-                        <p class="text-3xl font-black text-primary">${formatPercent(metrics.winPct)}</p>
-                        <div class="flex items-center gap-1 text-[10px] text-green-500 font-bold mt-1">
-                            <span class="material-symbols-outlined text-[12px]">trending_up</span>
-                            <span>+2.1 vs Avg</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 dark:bg-[#111722] p-4 rounded-lg">
-                        <p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase mb-1">Net Rating</p>
-                        <p class="text-3xl font-black text-slate-900 dark:text-white">${metrics.net.toFixed(1)}</p>
-                        <div class="flex items-center gap-1 text-[10px] text-slate-400 font-bold mt-1">
-                            <span class="material-symbols-outlined text-[12px]">horizontal_rule</span>
-                            <span>Neutral Trend</span>
-                        </div>
-                    </div>
-                </div>
-            `;
+        feedback.textContent = message;
+        feedback.classList.remove('hidden');
+    };
+
+    const normalizeNFLGroup = (position) => {
+        if (position === 'Quarterback') return 'QB';
+        if (position === 'Running Back') return 'RB';
+        if (position === 'Wide Receiver' || position === 'Tight End') return 'WRTE';
+        if (position === 'Defensive Line' || position === 'Linebacker') return 'DLLB';
+        if (position === 'Cornerback' || position === 'Safety') return 'CBS';
+        return 'QB';
+    };
+
+    const normalizeMLBGroup = (position) => {
+        return position === 'Pitcher' ? 'PITCHER' : 'HITTER';
+    };
+
+    const getDynamicSchema = () => {
+        if (state.league === 'NBA') return nbaSchema;
+        if (state.league === 'NFL') return nflSchema[normalizeNFLGroup(state.leftPosition)] || nflSchema.QB;
+        return mlbSchema[normalizeMLBGroup(state.leftPosition)] || mlbSchema.HITTER;
+    };
+
+    const createSeed = (text) => {
+        return String(text).split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    };
+
+    const formatRank = (index) => {
+        const rank = (index % 75) + 1;
+        return `RK${String(rank).padStart(2, '0')}`;
+    };
+
+    const generateValueForStat = (label, seed) => {
+        const pctLike = label.includes('%') || ['AVG', 'OBP', 'SLG', 'OPS', 'WHIP', 'ERA', 'Y/A', 'Passer Rating', 'YPC', 'TD%', 'INT%'].includes(label);
+        const timeLike = label === 'MP' || label === 'Min';
+        const counterLike = ['INT', 'Sacks', 'Drops', 'Forced Fumbles', 'Pat downs', 'Trp-Dbl', '2Dbl', 'W', 'L', 'HR', 'SO', 'BB', 'SB', 'GS', 'G', 'GP'].includes(label);
+
+        if (timeLike) {
+            const mins = 24 + (seed % 18);
+            const secs = String(seed % 60).padStart(2, '0');
+            return `${mins}:${secs}`;
+        }
+
+        if (pctLike) {
+            if (['AVG', 'OBP', 'SLG', 'OPS', 'WHIP', 'ERA'].includes(label)) {
+                const value = ((seed % 180) / 100) + 0.2;
+                return value.toFixed(3);
+            }
+            const value = 20 + (seed % 61) + ((seed % 10) / 10);
+            return `${value.toFixed(1)}%`;
+        }
+
+        if (counterLike) {
+            return String(1 + (seed % 18));
+        }
+
+        const value = 5 + (seed % 35) + ((seed % 10) / 10);
+        return value.toFixed(1);
+    };
+
+    const getPositionOptions = (league) => leaguePositions[league] || [];
+
+    const syncRightPositionForNFL = () => {
+        if (state.league !== 'NFL') {
+            rightPositionSelect.disabled = false;
+            rightPositionSelect.classList.remove('opacity-70', 'cursor-not-allowed');
             return;
         }
 
-        const player = playerDirectory.find((entry) => entry.name === selection);
-        const stats = getPlayerMetrics(selection);
-        container.innerHTML = `
-            <div class="p-6 bg-primary/5 dark:bg-white/[0.02] border-b border-slate-100 dark:border-[#232f48] flex items-center gap-4">
-                <div class="size-16 rounded-full bg-cover bg-center border-2 border-primary bg-primary/10 flex items-center justify-center text-primary font-bold">${getInitials(selection)}</div>
-                <div>
-                    <h3 class="text-xl font-bold dark:text-white">${selection}</h3>
-                    <p class="text-slate-500 dark:text-[#92a4c9] text-sm">${player?.team} • ${player?.position}</p>
+        state.rightPosition = state.leftPosition;
+        rightPositionSelect.value = state.leftPosition;
+        rightPositionSelect.disabled = true;
+        rightPositionSelect.classList.add('opacity-70', 'cursor-not-allowed');
+    };
+
+    const renderPositionSelects = () => {
+        const positions = getPositionOptions(state.league);
+        const optionsMarkup = ['<option value="">Position</option>', ...positions.map((position) => `<option value="${position}">${position}</option>`)].join('');
+        leftPositionSelect.innerHTML = optionsMarkup;
+        rightPositionSelect.innerHTML = optionsMarkup;
+
+        state.leftPosition = positions[0] || '';
+        state.rightPosition = positions[1] || positions[0] || '';
+
+        leftPositionSelect.value = state.leftPosition;
+        rightPositionSelect.value = state.rightPosition;
+        syncRightPositionForNFL();
+    };
+
+    const updateHeroMeta = () => {
+        leftHeroName.textContent = leftPlayerInput.value.trim() || 'Player A';
+        rightHeroName.textContent = rightPlayerInput.value.trim() || 'Player B';
+        leftHeroMeta.textContent = `${state.league} | ${state.leftPosition || 'POSITION'}`;
+        rightHeroMeta.textContent = `${state.league} | ${state.rightPosition || 'POSITION'}`;
+    };
+
+    const renderAveragesTable = () => {
+        const columns = getDynamicSchema();
+        const players = [
+            { name: leftPlayerInput.value.trim() || 'Player A', side: 'left' },
+            { name: rightPlayerInput.value.trim() || 'Player B', side: 'right' }
+        ];
+
+        const colWidth = 96;
+        const minWidth = Math.max(1200, 240 + (columns.length * colWidth));
+
+        averagesWrap.style.minWidth = `${minWidth}px`;
+        averagesWrap.innerHTML = `
+            <table class="h2h-table w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                        <th class="px-4 py-3 sticky left-0 bg-slate-50 dark:bg-slate-800/50 z-10">Player</th>
+                        ${columns.map((label, index) => `<th class="px-3 py-3 ${index % 2 === 0 ? 'h2h-col-highlight' : ''}">${label}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                    ${players.map((player, rowIndex) => `
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                            <td class="px-4 py-3 sticky left-0 bg-white dark:bg-surface-dark z-10"><span class="font-bold text-slate-900 dark:text-white">${player.name}</span></td>
+                            ${columns.map((label, colIndex) => {
+                                const seed = createSeed(`${player.side}-${label}-${colIndex}-${rowIndex}-${state.league}-${state.leftPosition}-${state.rightPosition}`);
+                                const value = generateValueForStat(label, seed);
+                                return `<td class="px-3 py-3 font-mono ${colIndex % 2 === 0 ? 'h2h-col-highlight' : ''}">${value} <span class="text-[10px] text-slate-500 font-bold ml-1">${formatRank(seed)}</span></td>`;
+                            }).join('')}
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    };
+
+    const buildGameRows = (side) => {
+        const columns = getDynamicSchema();
+        const games = Array.from({ length: 14 }, (_, index) => {
+            const gameNumber = index + 1;
+            const day = String(28 - (index % 20)).padStart(2, '0');
+            const month = String(((index % 6) + 1)).padStart(2, '0');
+            const isHome = index % 2 === 0;
+            const opponent = state.league === 'NBA' ? 'PHX' : state.league === 'NFL' ? 'BUF' : 'NYY';
+            const seedBase = createSeed(`${side}-${state.league}-${state.leftPosition}-${state.rightPosition}-${gameNumber}`);
+
+            return {
+                Date: `${month}/${day}/24`,
+                Team: `${isHome ? 'vs' : '@'} ${opponent}`,
+                'H/A': isHome ? 'Home' : 'Away',
+                GS: '1',
+                Min: `${28 + (seedBase % 13)}:${String(seedBase % 60).padStart(2, '0')}`,
+                dynamic: columns.reduce((acc, label, idx) => {
+                    acc[label] = generateValueForStat(label, seedBase + idx + 11);
+                    return acc;
+                }, {})
+            };
+        });
+
+        return state.showAllGames ? games : games.slice(0, 5);
+    };
+
+    const renderSingleGameTable = (title, rows, playerName, winsText, sideLabel, tableMinWidth) => {
+        const dynamicColumns = getDynamicSchema();
+        const baseColumns = ['Date', 'Team', 'H/A', 'GS', 'Min'];
+        const finalDynamicColumns = dynamicColumns.filter((label) => !baseColumns.includes(label));
+        const dateWidth = 108;
+        const teamWidth = 124;
+
+        const getHeaderClass = (label, index) => {
+            if (label === 'Date') {
+                return 'px-2 py-2 sticky left-0 z-30 bg-slate-50 dark:bg-slate-800/95 shadow-[2px_0_0_rgba(148,163,184,0.2)]';
+            }
+            if (label === 'Team') {
+                return `px-2 py-2 sticky z-20 bg-slate-50 dark:bg-slate-800/95 shadow-[2px_0_0_rgba(148,163,184,0.2)]`;
+            }
+            return `px-2 py-2 ${index % 2 === 1 ? 'h2h-col-highlight' : ''}`;
+        };
+
+        const getCellClass = (label, index) => {
+            if (label === 'Date') {
+                return 'px-2 py-2 font-mono sticky left-0 z-20 bg-white dark:bg-surface-dark shadow-[2px_0_0_rgba(148,163,184,0.2)]';
+            }
+            if (label === 'Team') {
+                return 'px-2 py-2 font-mono sticky z-10 bg-white dark:bg-surface-dark shadow-[2px_0_0_rgba(148,163,184,0.2)]';
+            }
+            return `px-2 py-2 font-mono ${index % 2 === 1 ? 'h2h-col-highlight' : ''}`;
+        };
+
+        return `
+            <div class="p-4 bg-white dark:bg-surface-dark border-r border-slate-200 dark:border-slate-800 last:border-r-0">
+                <div class="mb-3 text-xs font-bold uppercase tracking-widest ${sideLabel === 'left' ? 'text-primary' : 'text-slate-400'} flex items-center justify-between">
+                    <span>${title}</span>
+                    <span class="${sideLabel === 'left' ? 'bg-blue-100 dark:bg-blue-900/40' : 'bg-slate-100 dark:bg-slate-800'} px-2 py-0.5 rounded">${winsText}</span>
                 </div>
-            </div>
-            <div class="p-6 grid grid-cols-2 gap-4">
-                <div class="bg-slate-50 dark:bg-[#111722] p-4 rounded-lg">
-                    <p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase mb-1">PPG</p>
-                    <p class="text-3xl font-black text-primary">${stats.ppg.toFixed(1)}</p>
-                    <div class="flex items-center gap-1 text-[10px] text-green-500 font-bold mt-1">
-                        <span class="material-symbols-outlined text-[12px]">trending_up</span>
-                        <span>+2.1 vs Avg</span>
-                    </div>
-                </div>
-                <div class="bg-slate-50 dark:bg-[#111722] p-4 rounded-lg">
-                    <p class="text-slate-500 dark:text-[#92a4c9] text-xs font-bold uppercase mb-1">3P%</p>
-                    <p class="text-3xl font-black text-slate-900 dark:text-white">${stats.threePct.toFixed(1)}%</p>
-                    <div class="flex items-center gap-1 text-[10px] text-slate-400 font-bold mt-1">
-                        <span class="material-symbols-outlined text-[12px]">horizontal_rule</span>
-                        <span>Neutral Trend</span>
-                    </div>
-                </div>
+                <table class="h2h-table w-full text-[11px] text-left border-collapse" style="min-width:${tableMinWidth}px;">
+                    <thead>
+                        <tr class="border-b border-slate-200 dark:border-slate-800">
+                            ${baseColumns.map((label, idx) => {
+                                const style = label === 'Date'
+                                    ? `style="min-width:${dateWidth}px;width:${dateWidth}px;left:0;"`
+                                    : label === 'Team'
+                                        ? `style="min-width:${teamWidth}px;width:${teamWidth}px;left:${dateWidth}px;"`
+                                        : '';
+                                return `<th ${style} class="${getHeaderClass(label, idx)}">${label}</th>`;
+                            }).join('')}
+                            ${finalDynamicColumns.map((label, idx) => `<th class="px-2 py-2 ${(idx + baseColumns.length) % 2 === 1 ? 'h2h-col-highlight' : ''}">${label}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                        ${rows.map((row) => `
+                            <tr>
+                                ${baseColumns.map((label, idx) => {
+                                    const style = label === 'Date'
+                                        ? `style="min-width:${dateWidth}px;width:${dateWidth}px;left:0;"`
+                                        : label === 'Team'
+                                            ? `style="min-width:${teamWidth}px;width:${teamWidth}px;left:${dateWidth}px;"`
+                                            : '';
+                                    return `<td ${style} class="${getCellClass(label, idx)}">${row[label]}</td>`;
+                                }).join('')}
+                                ${finalDynamicColumns.map((label, idx) => `<td class="px-2 py-2 font-mono ${((idx + baseColumns.length) % 2) === 1 ? 'h2h-col-highlight' : ''}">${row.dynamic[label]}</td>`).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
             </div>
         `;
     };
 
-    const renderDeltaTable = () => {
-        if (!state.leftSelection || !state.rightSelection) {
-            deltaRows.innerHTML = '';
-            return;
+    const renderGameLogTables = () => {
+        const leftName = leftPlayerInput.value.trim() || 'Player A';
+        const rightName = rightPlayerInput.value.trim() || 'Player B';
+        const leftRows = buildGameRows('left');
+        const rightRows = buildGameRows('right');
+        const dynamicColumns = getDynamicSchema();
+        const finalDynamicColumns = dynamicColumns.filter((label) => !['Date', 'Team', 'H/A', 'GS', 'Min'].includes(label));
+        const minWidth = Math.max(1180, 108 + 124 + (3 * 92) + (finalDynamicColumns.length * 108));
+
+        gameLogLeftName.textContent = leftName;
+        gameLogRightName.textContent = rightName;
+
+        gameLogLeftWrap.innerHTML = renderSingleGameTable(`${leftName} Stats`, leftRows, leftName, '6-4 in L10', 'left', minWidth);
+        gameLogRightWrap.innerHTML = renderSingleGameTable(`${rightName} Stats`, rightRows, rightName, '4-6 in L10', 'right', minWidth);
+        const moreGamesAvailable = 14 > 5;
+        if (!moreGamesAvailable) {
+            showGamesButton.classList.add('hidden');
+        } else {
+            showGamesButton.classList.remove('hidden');
+            showGamesButton.innerHTML = state.showAllGames
+                ? 'Show Fewer Games <span class="material-symbols-outlined text-sm">expand_less</span>'
+                : 'Show All Games <span class="material-symbols-outlined text-sm">chevron_right</span>';
         }
 
-        if (state.mode === 'team') {
-            const left = getTeamMetrics(state.leftSelection);
-            const right = getTeamMetrics(state.rightSelection);
-            const rows = [
-                { label: 'Net Rating', left: left.net, right: right.net, fmt: (v) => v.toFixed(1) },
-                { label: 'Off Rating', left: left.ortg, right: right.ortg, fmt: (v) => v.toFixed(1) },
-                { label: 'Def Rating', left: left.drtg, right: right.drtg, fmt: (v) => v.toFixed(1) },
-                { label: 'Pace', left: left.pace, right: right.pace, fmt: (v) => v.toFixed(1) },
-                { label: 'Turnover %', left: left.tov, right: right.tov, fmt: (v) => v.toFixed(1) }
-            ];
-            deltaRows.innerHTML = rows.map((row) => {
-                const delta = row.left - row.right;
-                const deltaClass = delta >= 0 ? 'text-green-500' : 'text-red-400';
-                return `
-                    <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
-                        <td class="px-6 py-4 text-sm font-medium text-slate-700 dark:text-[#92a4c9]">${row.label}</td>
-                        <td class="px-6 py-4 text-sm font-bold text-center">${row.fmt(row.left)}</td>
-                        <td class="px-6 py-4 text-sm font-bold text-center">${row.fmt(row.right)}</td>
-                        <td class="px-6 py-4 text-sm font-black text-right ${deltaClass}">${delta >= 0 ? '+' : ''}${delta.toFixed(1)}</td>
-                    </tr>
-                `;
-            }).join('');
-            return;
+        refreshGameLogSyncMetrics();
+        requestAnimationFrame(refreshGameLogSyncMetrics);
+    };
+
+    const refreshGameLogSyncMetrics = () => {
+        if (!gameLogLeftScroll || !gameLogRightScroll || !gameLogSyncScroll || !gameLogSyncWidth) return;
+
+        const maxLeft = Math.max(0, gameLogLeftScroll.scrollWidth - gameLogLeftScroll.clientWidth);
+        const maxRight = Math.max(0, gameLogRightScroll.scrollWidth - gameLogRightScroll.clientWidth);
+        gameLogMaxScroll = Math.max(maxLeft, maxRight);
+
+        const syncClientWidth = gameLogSyncScroll.clientWidth;
+        const syncTrackWidth = Math.max(syncClientWidth + gameLogMaxScroll, syncClientWidth + 1);
+        gameLogSyncWidth.style.width = `${syncTrackWidth}px`;
+
+        const syncedBar = Math.max(0, Math.min(gameLogSyncScroll.scrollLeft, gameLogMaxScroll));
+        gameLogSyncScroll.scrollLeft = syncedBar;
+        const syncedLeft = Math.max(0, Math.min(syncedBar, maxLeft));
+        const syncedRight = Math.max(0, Math.min(syncedBar, maxRight));
+        gameLogLeftScroll.scrollLeft = syncedLeft;
+        gameLogRightScroll.scrollLeft = syncedRight;
+    };
+
+    const setupGameLogScrollSync = () => {
+        const syncFromBottomBar = () => {
+            const desired = Math.max(0, Math.min(gameLogSyncScroll.scrollLeft, gameLogMaxScroll));
+            if (desired !== gameLogSyncScroll.scrollLeft) {
+                gameLogSyncScroll.scrollLeft = desired;
+            }
+
+            const leftMax = Math.max(0, gameLogLeftScroll.scrollWidth - gameLogLeftScroll.clientWidth);
+            const rightMax = Math.max(0, gameLogRightScroll.scrollWidth - gameLogRightScroll.clientWidth);
+            gameLogLeftScroll.scrollLeft = Math.min(desired, leftMax);
+            gameLogRightScroll.scrollLeft = Math.min(desired, rightMax);
+        };
+
+        const blockHorizontalInput = (event) => {
+            if (Math.abs(event.deltaX) > 0 || event.shiftKey) {
+                event.preventDefault();
+            }
+        };
+
+        gameLogLeftScroll.addEventListener('wheel', blockHorizontalInput, { passive: false });
+        gameLogRightScroll.addEventListener('wheel', blockHorizontalInput, { passive: false });
+        gameLogSyncScroll.addEventListener('scroll', syncFromBottomBar);
+    };
+
+    const updateGameTabs = () => {
+        document.querySelectorAll('.h2h-game-tab').forEach((button) => {
+            const isActive = button.dataset.gameTab === state.gameTab;
+            button.classList.toggle('bg-primary', isActive);
+            button.classList.toggle('text-white', isActive);
+            button.classList.toggle('shadow-sm', isActive);
+            button.classList.toggle('opacity-60', !isActive);
+        });
+    };
+
+    const updateStatTabs = () => {
+        const statsActive = state.statView === 'stats';
+        statsTab.classList.toggle('bg-primary', statsActive);
+        statsTab.classList.toggle('text-white', statsActive);
+        statsTab.classList.toggle('shadow-sm', statsActive);
+        statsTab.classList.toggle('opacity-60', !statsActive);
+
+        diffTab.classList.toggle('bg-primary', !statsActive);
+        diffTab.classList.toggle('text-white', !statsActive);
+        diffTab.classList.toggle('shadow-sm', !statsActive);
+        diffTab.classList.toggle('opacity-60', statsActive);
+    };
+
+    const validateNFLPositionRule = () => {
+        if (state.league !== 'NFL') return true;
+        const valid = state.leftPosition === state.rightPosition;
+        if (!valid) {
+            setFeedback('NFL comparisons require both players to use the same position.');
+            return false;
         }
-
-        const left = getPlayerMetrics(state.leftSelection);
-        const right = getPlayerMetrics(state.rightSelection);
-        const rows = [
-            { label: 'Field Goal %', left: left.fgPct, right: right.fgPct, fmt: (v) => `${v.toFixed(1)}%` },
-            { label: 'Assists Per Game', left: left.ast, right: right.ast, fmt: (v) => v.toFixed(1) },
-            { label: 'Usage Rate %', left: left.usg, right: right.usg, fmt: (v) => v.toFixed(1) },
-            { label: 'True Shooting %', left: left.ts, right: right.ts, fmt: (v) => `${v.toFixed(1)}%` }
-        ];
-        deltaRows.innerHTML = rows.map((row) => {
-            const delta = row.left - row.right;
-            const deltaClass = delta >= 0 ? 'text-green-500' : 'text-red-400';
-            return `
-                <tr class="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
-                    <td class="px-6 py-4 text-sm font-medium text-slate-700 dark:text-[#92a4c9]">${row.label}</td>
-                    <td class="px-6 py-4 text-sm font-bold text-center">${row.fmt(row.left)}</td>
-                    <td class="px-6 py-4 text-sm font-bold text-center">${row.fmt(row.right)}</td>
-                    <td class="px-6 py-4 text-sm font-black text-right ${deltaClass}">${delta >= 0 ? '+' : ''}${delta.toFixed(1)}</td>
-                </tr>
-            `;
-        }).join('');
+        return true;
     };
 
-    const renderComparison = () => {
-        renderEntityCard(entityLeftCard, state.leftSelection);
-        renderEntityCard(entityRightCard, state.rightSelection);
-        renderDeltaTable();
-        deltaLeftLabel.textContent = state.leftSelection || 'Entity A';
-        deltaRightLabel.textContent = state.rightSelection || 'Entity B';
+    const rerenderTables = () => {
+        renderAveragesTable();
+        renderGameLogTables();
+        updateHeroMeta();
+        updateStatTabs();
+        updateGameTabs();
     };
 
-    const updateInputState = () => {
-        if (!state.league) {
-            leftInput.value = '';
-            rightInput.value = '';
-            leftInput.setAttribute('disabled', 'true');
-            rightInput.setAttribute('disabled', 'true');
-            leftInput.setAttribute('placeholder', 'Select league first...');
-            rightInput.setAttribute('placeholder', 'Select league first...');
-            leftTypeahead.close();
-            rightTypeahead.close();
-            return;
+    renderPositionSelects();
+    updateHeroMeta();
+    renderAveragesTable();
+    renderGameLogTables();
+    updateStatTabs();
+    updateGameTabs();
+    setupGameLogScrollSync();
+
+    leagueSelect.addEventListener('change', (event) => {
+        state.league = event.target.value;
+        state.showAllGames = false;
+        setFeedback('');
+        renderPositionSelects();
+        rerenderTables();
+    });
+
+    leftPositionSelect.addEventListener('change', (event) => {
+        state.leftPosition = event.target.value;
+        if (state.league === 'NFL') {
+            state.rightPosition = state.leftPosition;
+            rightPositionSelect.value = state.leftPosition;
         }
-        leftInput.removeAttribute('disabled');
-        rightInput.removeAttribute('disabled');
-        leftInput.setAttribute('placeholder', state.mode === 'team' ? 'Search Team...' : 'Search Player...');
-        rightInput.setAttribute('placeholder', state.mode === 'team' ? 'Search Team...' : 'Search Player...');
-        const items = getListByMode(state.league);
-        leftTypeahead.setItems(items);
-        rightTypeahead.setItems(items);
-    };
-
-    const setScope = (scope) => {
-        state.mode = scope;
-        updateScopeButtons();
-        state.leftSelection = '';
-        state.rightSelection = '';
-        leftInput.value = '';
-        rightInput.value = '';
-        updateInputState();
-        renderComparison();
-    };
-
-    scopeButtons.forEach((button) => {
-        button.addEventListener('click', () => setScope(button.dataset.scope));
+        setFeedback('');
+        rerenderTables();
     });
 
-    scopeButtonsPane.forEach((button) => {
-        button.addEventListener('click', () => setScope(button.dataset.scope));
+    rightPositionSelect.addEventListener('change', (event) => {
+        state.rightPosition = event.target.value;
+        if (state.league === 'NFL' && state.rightPosition !== state.leftPosition) {
+            state.rightPosition = state.leftPosition;
+            rightPositionSelect.value = state.leftPosition;
+            setFeedback('NFL comparisons require matching positions. Right position was synced to the left.');
+        } else {
+            setFeedback('');
+        }
+        rerenderTables();
     });
 
-    leagueSelect.addEventListener('change', () => {
-        state.league = leagueSelect.value;
-        state.leftSelection = '';
-        state.rightSelection = '';
-        updateInputState();
-        renderComparison();
+    leftPlayerInput.addEventListener('input', () => {
+        updateHeroMeta();
+        rerenderTables();
     });
 
-    document.getElementById('clear-compare').addEventListener('click', () => {
-        state.league = '';
-        state.leftSelection = '';
-        state.rightSelection = '';
-        leagueSelect.value = '';
-        updateInputState();
-        renderComparison();
+    rightPlayerInput.addEventListener('input', () => {
+        updateHeroMeta();
+        rerenderTables();
     });
 
-    updateScopeButtons();
-    updateInputState();
-    renderComparison();
+    compareButton.addEventListener('click', () => {
+        if (!validateNFLPositionRule()) return;
+        setFeedback('');
+        rerenderTables();
+    });
+
+    seasonSelect.addEventListener('change', () => {
+        state.season = seasonSelect.value;
+        rerenderTables();
+    });
+
+    statsTab.addEventListener('click', () => {
+        state.statView = 'stats';
+        setFeedback('');
+        rerenderTables();
+    });
+
+    diffTab.addEventListener('click', () => {
+        state.statView = 'differentials';
+        setFeedback('');
+        rerenderTables();
+    });
+
+    document.querySelectorAll('.h2h-game-tab').forEach((button) => {
+        button.addEventListener('click', () => {
+            state.gameTab = button.dataset.gameTab;
+            setFeedback('');
+            rerenderTables();
+        });
+    });
+
+    showGamesButton.addEventListener('click', () => {
+        state.showAllGames = !state.showAllGames;
+        rerenderTables();
+    });
 }
 
 window.renderHeadToHeadPage = renderHeadToHeadPage;
