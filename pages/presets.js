@@ -134,7 +134,9 @@ function createPresetCard(preset) {
         "https://lh3.googleusercontent.com/aida-public/AB6AXuD4Yw70q6LvGsFPdYJA4k0Mi2-6YPrQffI5rL7FkicNG3BqewHfUYwiOwYZMSjRtdYGq-HfAPq6TOj41sfosnRvBIcFkPpmkAed2EhvZOCpH28ONJOAqwT7mVh_jPeeiE9E2PFNF_YotG2is7kpiTlsG0A1EVuqtCvTzDaUbPzNedhlIYdRKtIxwbAdv_oQromkvjmsZK2yvY8XHGJxYO_4BpcHjxwh9VnzzVPlsKI8_j2C9iTojyodWM6CQHdS0XTjcsTNCThAxlY",
         "https://lh3.googleusercontent.com/aida-public/AB6AXuB9nnIjwOxehgxItucL7rj81tks0ChhhyHsIZ8yEsCws_KKAoKKz0fRJY376VJEcaTyJiI8iIYZ9aNykoYF5p69-jqENK5tpc3qZ9PucsgwsFDLNP62GEkkw221wgF7CWtJEGgwut7RHrQfVIZbHOZkOHtZi9Da94LbDH-gA8DJB5vGjW5jiz23c8hjttGO9kXWVimYvBxP8s8Ghft62U6V6LVBK5rkqjG6SGqVlvBAPvtFcvx1Snp-ikkZgh9Zfbu0GABUhQjEqnY"
     ];
-    const image = images[preset.id % images.length] || images[0];
+    const presetId = String(preset.id);
+    const presetIdJs = presetId.replace(/'/g, "\\'");
+    const image = images[(Number(preset.id) || 0) % images.length] || images[0];
 
     return `
         <div class="group flex flex-col sm:flex-row bg-white dark:bg-[#192233] rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 hover:border-primary transition-all duration-300 shadow-sm hover:shadow-xl">
@@ -151,7 +153,7 @@ function createPresetCard(preset) {
                 <div>
                     <div class="flex justify-between items-start mb-2">
                         <p class="text-primary text-[10px] font-bold tracking-widest uppercase">${preset.league || 'General'}</p>
-                        <button onclick="togglePresetPin(${preset.id})" class="text-slate-400 hover:text-primary transition-colors">
+                        <button onclick="togglePresetPin('${presetIdJs}')" class="text-slate-400 hover:text-primary transition-colors">
                             <span class="material-symbols-outlined text-lg fill-1">${preset.pinned ? 'keep' : 'keep_off'}</span>
                         </button>
                     </div>
@@ -169,13 +171,13 @@ function createPresetCard(preset) {
                         <p class="text-slate-700 dark:text-slate-300 text-xs font-semibold">${Utils.timeAgo(preset.lastRun)}</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button onclick="editPreset(${preset.id})" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
+                        <button onclick="editPreset('${presetIdJs}')" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
                             <span class="material-symbols-outlined text-xl">edit</span>
                         </button>
-                         <button onclick="deletePresetConfirm(${preset.id})" class="p-2 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-500 transition-colors">
+                         <button onclick="deletePresetConfirm('${presetIdJs}')" class="p-2 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-500 transition-colors">
                             <span class="material-symbols-outlined text-xl">delete</span>
                         </button>
-                        <button onclick="runPreset(${preset.id})" class="px-5 h-9 bg-primary text-white rounded-lg text-sm font-bold shadow-md shadow-primary/20 hover:scale-105 transition-all active:scale-95">
+                        <button onclick="runPreset('${presetIdJs}')" class="px-5 h-9 bg-primary text-white rounded-lg text-sm font-bold shadow-md shadow-primary/20 hover:scale-105 transition-all active:scale-95">
                             Run Query
                         </button>
                     </div>
@@ -253,12 +255,104 @@ function closePresetModal() {
     document.getElementById('preset-modal').classList.add('hidden');
 }
 
+function createPresetFromScratch() {
+    const name = document.getElementById('scratch-name')?.value.trim();
+    const league = document.getElementById('scratch-league')?.value;
+    const type = document.getElementById('scratch-type')?.value;
+    const metric = document.getElementById('scratch-metric')?.value.trim();
+    const query = document.getElementById('scratch-query')?.value.trim();
+
+    if (!name || !league || !type || !metric || !query) {
+        window.alert('Please complete all preset fields.');
+        return;
+    }
+
+    AppState.addPreset({
+        name,
+        league,
+        type,
+        metric,
+        query,
+        lastRunStatus: 'success'
+    });
+
+    closePresetModal();
+    renderPresetsList();
+    window.alert(`Preset "${name}" created successfully.`);
+}
+
+function togglePresetPin(id) {
+    const success = AppState.togglePin(String(id));
+    if (!success) {
+        window.alert('You can only pin up to 5 presets. Please unpin another preset first.');
+        return;
+    }
+
+    renderPresetsList();
+}
+
+function editPreset(id) {
+    const preset = AppState.getPreset(String(id));
+    if (!preset) return;
+
+    const nextName = window.prompt('Edit preset name:', preset.name);
+    if (!nextName) return;
+
+    const trimmedName = nextName.trim();
+    if (!trimmedName || trimmedName === preset.name) return;
+
+    AppState.updatePreset(String(id), { name: trimmedName });
+    renderPresetsList();
+}
+
+function deletePresetConfirm(id) {
+    const preset = AppState.getPreset(String(id));
+    if (!preset) return;
+
+    const shouldDelete = window.confirm(`Delete preset "${preset.name}"? This cannot be undone.`);
+    if (!shouldDelete) return;
+
+    AppState.deletePreset(String(id));
+    renderPresetsList();
+}
+
+function runPreset(id) {
+    const preset = AppState.getPreset(String(id));
+    if (!preset) return;
+
+    AppState.updatePreset(String(id), {
+        lastRun: new Date().toISOString(),
+        lastRunStatus: Math.random() > 0.1 ? 'success' : 'stale'
+    });
+
+    window.alert(`Running preset: ${preset.name}\n\n${preset.query || 'No query details saved.'}`);
+    renderPresetsList();
+}
+
+function runAllPinned() {
+    const pinnedPresets = AppState.getPinnedPresets();
+    if (pinnedPresets.length === 0) {
+        window.alert('No pinned presets to run.');
+        return;
+    }
+
+    pinnedPresets.forEach((preset) => {
+        AppState.updatePreset(String(preset.id), {
+            lastRun: new Date().toISOString(),
+            lastRunStatus: 'success'
+        });
+    });
+
+    window.alert(`Ran ${pinnedPresets.length} pinned preset${pinnedPresets.length === 1 ? '' : 's'}.`);
+    renderPresetsList();
+}
+
 // Global Exports
 window.renderPresetsPage = renderPresetsPage;
-window.runPreset = runPreset; // Assumes existing generic runPreset from app or previous code
+window.runPreset = runPreset;
 window.togglePresetPin = togglePresetPin;
 window.deletePresetConfirm = deletePresetConfirm;
 window.editPreset = editPreset;
 window.openCreatePresetModal = openCreatePresetModal;
 window.closePresetModal = closePresetModal;
-window.runAllPinned = () => alert("Running all pinned presets..."); // Placeholder
+window.runAllPinned = runAllPinned;
