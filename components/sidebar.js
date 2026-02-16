@@ -43,8 +43,17 @@ const Sidebar = {
         sidebar.innerHTML = content;
     },
 
-    // 1. SLEUTH HOUND (Recent Queries)
+    // 1. DYNAMIC QUERY (Recent Queries)
     renderQuerySidebar() {
+        const recentQueries = window.AppState && typeof AppState.getRecentQueries === 'function'
+            ? AppState.getRecentQueries()
+            : [];
+        const activeQueryId = window.AppState ? AppState.activeQueryId : null;
+
+        const queryItems = recentQueries.length
+            ? recentQueries.map((query) => this.renderQueryItem(query, query.id === activeQueryId)).join('')
+            : '<p class="px-3 py-2 text-[11px] text-slate-500">No recent queries yet</p>';
+
         return `
             <div class="flex flex-col h-full">
                 <div class="px-6 mb-4 flex items-center justify-between">
@@ -52,32 +61,38 @@ const Sidebar = {
                      <span class="material-symbols-outlined text-slate-500 text-sm cursor-pointer hover:text-white transition-colors">history</span>
                 </div>
                 <div class="flex-1 overflow-y-auto custom-scrollbar px-3 space-y-1">
-                    ${this.renderQueryItem('LeBron vs Durant 23-24', true)}
-                    ${this.renderQueryItem('Curry 3P% last 10 games')}
-                    ${this.renderQueryItem('Nuggets Bench Efficiency')}
-                    ${this.renderQueryItem('Wemby Blocks vs HOU')}
-                    ${this.renderQueryItem('Top 10 TS% Min 20 PPG')}
-                    ${this.renderQueryItem('LAL Defensive Rating March')}
+                    ${queryItems}
                 </div>
                 <div class="p-4 mt-auto border-t border-slate-200 dark:border-[#1E293B]">
-                    <button class="w-full flex items-center justify-center gap-2 bg-[#1E293B] text-white h-10 rounded-lg text-sm font-bold hover:bg-[#2d3748] transition-all shadow-sm">
-                        <span class="material-symbols-outlined text-lg">add</span>
-                        New Query
-                    </button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="Sidebar.createNewQuery()" class="w-full flex items-center justify-center gap-2 bg-primary text-white h-10 rounded-lg text-sm font-bold hover:bg-primary-hover transition-all shadow-glow">
+                            <span class="material-symbols-outlined text-lg">add</span>
+                            New Query
+                        </button>
+                        <button onclick="Sidebar.deleteActiveQuery()" class="w-full flex items-center justify-center gap-2 bg-rose-600 text-white h-10 rounded-lg text-sm font-bold hover:bg-rose-500 transition-all shadow-sm">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                            Delete
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
     },
 
-    renderQueryItem(text, active = false) {
-        const activeClass = active ? 'bg-[#1E293B] text-white' : 'text-slate-400 hover:text-white hover:bg-white/5';
+    renderQueryItem(query, active = false) {
+        const activeClass = active ? 'bg-[#1E293B] text-white border border-primary/30' : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent';
         const iconColor = active ? 'text-primary' : 'text-slate-500';
 
         return `
-            <button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all group text-left ${activeClass}">
-                <span class="material-symbols-outlined text-[16px] ${iconColor} group-hover:text-primary transition-colors">search</span>
-                <span class="truncate">${text}</span>
-            </button>
+            <div class="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-medium transition-all group ${activeClass}">
+                <button onclick="Sidebar.openQuery('${query.id}')" class="flex-1 min-w-0 flex items-center gap-3 text-left">
+                    <span class="material-symbols-outlined text-[16px] ${iconColor} group-hover:text-primary transition-colors">search</span>
+                    <span class="truncate">${this.escapeHtml(query.name)}</span>
+                </button>
+                <button onclick="event.stopPropagation(); Sidebar.editQueryName('${query.id}')" class="shrink-0 text-slate-500 hover:text-white transition-colors" aria-label="Edit query name">
+                    <span class="material-symbols-outlined text-[15px]">edit</span>
+                </button>
+            </div>
         `;
     },
 
@@ -218,6 +233,63 @@ const Sidebar = {
                ${badge ? '<span class="bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded">NEW</span>' : ''}
             </a>
         `;
+    },
+
+    openQuery(queryId) {
+        if (!window.Router || typeof Router.navigateToQuery !== 'function') return;
+        Router.navigateToQuery(queryId);
+    },
+
+    createNewQuery() {
+        if (!window.AppState || typeof AppState.createQuery !== 'function') return;
+        const query = AppState.createQuery('New Query');
+        if (!query) return;
+
+        if (!window.Router || typeof Router.navigateToQuery !== 'function') {
+            this.render('query');
+            return;
+        }
+
+        Router.navigateToQuery(query.id);
+    },
+
+    editQueryName(queryId) {
+        if (!window.AppState || typeof AppState.getQueryById !== 'function' || typeof AppState.renameQuery !== 'function') return;
+        const query = AppState.getQueryById(queryId);
+        if (!query) return;
+
+        const newName = window.prompt('Rename query', query.name);
+        if (newName === null) return;
+
+        const renamed = AppState.renameQuery(queryId, newName);
+        if (!renamed) {
+            window.alert('Query name cannot be empty.');
+            return;
+        }
+
+        this.render(AppState.currentPage);
+    },
+
+    deleteActiveQuery() {
+        if (!window.AppState || typeof AppState.getActiveQuery !== 'function' || typeof AppState.deleteQuery !== 'function') return;
+        const activeQuery = AppState.getActiveQuery();
+        if (!activeQuery) return;
+
+        const confirmed = window.confirm(`Delete query \"${activeQuery.name}\"?`);
+        if (!confirmed) return;
+
+        const result = AppState.deleteQuery(activeQuery.id);
+        if (!result || !result.ok) {
+            window.alert('Unable to delete query.');
+            return;
+        }
+
+        if (window.Router && typeof Router.navigateToQuery === 'function' && result.activeQueryId) {
+            Router.navigateToQuery(result.activeQueryId);
+            return;
+        }
+
+        this.render('query');
     },
 
     toggleScannerArchive() {

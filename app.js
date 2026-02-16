@@ -5,11 +5,203 @@
 // State Management
 const AppState = {
     currentPage: 'query',
+    currentQueryId: null,
     currentScannerFolderId: null,
+    querySessions: JSON.parse(localStorage.getItem('statsleuths_query_sessions') || '[]'),
+    activeQueryId: localStorage.getItem('statsleuths_active_query_id') || null,
     presets: JSON.parse(localStorage.getItem('statsleuths_presets') || '[]'),
     presetViewMode: localStorage.getItem('statsleuths_preset_view') || 'card',
     scannerArchive: JSON.parse(localStorage.getItem('statsleuths_scanner_archive') || '{"folders":[],"scans":[]}'),
     scannerArchiveExpanded: localStorage.getItem('statsleuths_scanner_archive_expanded') !== 'false',
+
+    saveQuerySessions() {
+        localStorage.setItem('statsleuths_query_sessions', JSON.stringify(this.querySessions));
+        localStorage.setItem('statsleuths_active_query_id', this.activeQueryId || '');
+    },
+
+    getRecentQueries() {
+        if (!Array.isArray(this.querySessions)) {
+            this.querySessions = [];
+        }
+
+        if (this.querySessions.length === 0) {
+            const defaultQueries = [
+                'LeBron vs Durant 23-24',
+                'Curry 3P% last 10 games',
+                'Nuggets Bench Efficiency',
+                'Wemby Blocks vs HOU',
+                'Top 10 TS% Min 20 PPG',
+                'LAL Defensive Rating March'
+            ];
+
+            this.querySessions = defaultQueries.map((name, index) => ({
+                id: `query-seed-${Date.now()}-${index}`,
+                name,
+                queryText: '',
+                hasResults: false,
+                lastLeague: 'auto',
+                lastRunAt: null,
+                createdAt: new Date(Date.now() - (index * 1000)).toISOString(),
+                updatedAt: new Date(Date.now() - (index * 1000)).toISOString()
+            }));
+
+            this.activeQueryId = this.querySessions[0].id;
+            this.saveQuerySessions();
+        }
+
+        this.querySessions = this.querySessions.map((query, index) => ({
+            id: query.id || `query-restored-${Date.now()}-${index}`,
+            name: String(query.name || 'New Query').trim() || 'New Query',
+            queryText: String(query.queryText || ''),
+            hasResults: Boolean(query.hasResults),
+            lastLeague: query.lastLeague || 'auto',
+            lastRunAt: query.lastRunAt || null,
+            createdAt: query.createdAt || new Date().toISOString(),
+            updatedAt: query.updatedAt || new Date().toISOString()
+        }));
+
+        return this.querySessions;
+    },
+
+    getQueryById(queryId) {
+        if (!queryId) return null;
+        return this.getRecentQueries().find((query) => query.id === queryId) || null;
+    },
+
+    getActiveQuery() {
+        const queries = this.getRecentQueries();
+        if (!queries.length) {
+            return null;
+        }
+
+        let activeQuery = this.getQueryById(this.activeQueryId);
+        if (!activeQuery) {
+            activeQuery = queries[0];
+            this.activeQueryId = activeQuery.id;
+            this.saveQuerySessions();
+        }
+
+        return activeQuery;
+    },
+
+    setActiveQuery(queryId) {
+        const query = this.getQueryById(queryId);
+        if (!query) {
+            return false;
+        }
+
+        this.activeQueryId = query.id;
+        this.saveQuerySessions();
+        return true;
+    },
+
+    createQuery(name = 'New Query') {
+        const queryName = String(name || '').trim() || 'New Query';
+        const query = {
+            id: `query-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+            name: queryName,
+            queryText: '',
+            hasResults: false,
+            lastLeague: 'auto',
+            lastRunAt: null,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+
+        this.getRecentQueries();
+        this.querySessions.unshift(query);
+        this.activeQueryId = query.id;
+        this.saveQuerySessions();
+        return query;
+    },
+
+    renameQuery(queryId, name) {
+        const query = this.getQueryById(queryId);
+        const normalizedName = String(name || '').trim();
+        if (!query || !normalizedName) {
+            return false;
+        }
+
+        query.name = normalizedName;
+        query.updatedAt = new Date().toISOString();
+        this.saveQuerySessions();
+        return true;
+    },
+
+    updateQueryText(queryId, text) {
+        const query = this.getQueryById(queryId);
+        if (!query) {
+            return false;
+        }
+
+        query.queryText = String(text || '');
+        query.updatedAt = new Date().toISOString();
+        this.saveQuerySessions();
+        return true;
+    },
+
+    updateActiveQueryText(text) {
+        const activeQuery = this.getActiveQuery();
+        if (!activeQuery) {
+            return false;
+        }
+
+        return this.updateQueryText(activeQuery.id, text);
+    },
+
+    markQueryAnalyzed(queryId, queryText, league) {
+        const query = this.getQueryById(queryId);
+        if (!query) {
+            return false;
+        }
+
+        query.queryText = String(queryText || '');
+        query.lastLeague = league || 'auto';
+        query.hasResults = true;
+        query.lastRunAt = new Date().toISOString();
+        query.updatedAt = new Date().toISOString();
+        this.saveQuerySessions();
+        return true;
+    },
+
+    markActiveQueryAnalyzed(queryText, league) {
+        const activeQuery = this.getActiveQuery();
+        if (!activeQuery) {
+            return false;
+        }
+
+        return this.markQueryAnalyzed(activeQuery.id, queryText, league);
+    },
+
+    deleteQuery(queryId) {
+        this.getRecentQueries();
+        const index = this.querySessions.findIndex((query) => query.id === queryId);
+        if (index === -1) {
+            return { ok: false };
+        }
+
+        const wasActive = this.activeQueryId === queryId;
+        this.querySessions.splice(index, 1);
+
+        if (this.querySessions.length === 0) {
+            const createdQuery = this.createQuery('New Query');
+            return {
+                ok: true,
+                activeQueryId: createdQuery.id
+            };
+        }
+
+        if (wasActive) {
+            const fallbackIndex = Math.min(index, this.querySessions.length - 1);
+            this.activeQueryId = this.querySessions[fallbackIndex].id;
+        }
+
+        this.saveQuerySessions();
+        return {
+            ok: true,
+            activeQueryId: this.activeQueryId
+        };
+    },
 
     saveScannerArchive() {
         localStorage.setItem('statsleuths_scanner_archive', JSON.stringify(this.scannerArchive));
@@ -367,6 +559,14 @@ const Router = {
     },
 
     resolveRoute(page) {
+        if (page.startsWith('query:')) {
+            const queryId = page.slice('query:'.length);
+            return {
+                routeKey: 'query',
+                params: { queryId }
+            };
+        }
+
         if (page.startsWith('scanner-archive:')) {
             const folderId = page.slice('scanner-archive:'.length);
             return {
@@ -388,6 +588,22 @@ const Router = {
 
         if (renderFnName && window[renderFnName]) {
             AppState.currentPage = routeKey;
+            if (routeKey === 'query') {
+                if (resolved.params.queryId) {
+                    const wasSet = AppState.setActiveQuery(resolved.params.queryId);
+                    if (!wasSet) {
+                        const fallbackQuery = AppState.getActiveQuery() || AppState.createQuery();
+                        AppState.currentQueryId = fallbackQuery ? fallbackQuery.id : null;
+                    } else {
+                        AppState.currentQueryId = resolved.params.queryId;
+                    }
+                } else {
+                    const activeQuery = AppState.getActiveQuery() || AppState.createQuery();
+                    AppState.currentQueryId = activeQuery ? activeQuery.id : null;
+                }
+            } else {
+                AppState.currentQueryId = null;
+            }
             AppState.currentScannerFolderId = routeKey === 'scanner-archive' ? resolved.params.folderId : null;
             if (window.Sidebar) {
                 Sidebar.render(routeKey);
@@ -400,6 +616,11 @@ const Router = {
     navigateToScannerArchive(folderId) {
         if (!folderId) return;
         window.location.hash = `scanner-archive:${folderId}`;
+    },
+
+    navigateToQuery(queryId) {
+        if (!queryId) return;
+        window.location.hash = `query:${queryId}`;
     },
 
     updateActiveNav(page) {

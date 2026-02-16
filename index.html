@@ -169,7 +169,7 @@
             <nav class="top-nav hidden md:flex items-center gap-1">
                 <a href="#query"
                     class="nav-link px-3 py-2 text-xs font-bold text-slate-500 hover:text-white transition-colors uppercase tracking-wide"
-                    data-page="query">Sleuth Hound</a>
+                    data-page="query">Dynamic Query</a>
                 <a href="#player"
                     class="nav-link px-3 py-2 text-xs font-bold text-slate-500 hover:text-white transition-colors uppercase tracking-wide"
                     data-page="player">Scouting</a>
@@ -287,6 +287,11 @@
     <script src="components/filter-chips.js"></script>
     <script src="components/sidebar.js"></script>
     <script src="components/loading.js"></script>
+    <script>
+        window.RUNTIME_CONFIG = window.RUNTIME_CONFIG || {};
+        window.RUNTIME_CONFIG.convexUrl =
+            window.RUNTIME_CONFIG.convexUrl || localStorage.getItem('statsleuths_convex_url') || 'http://127.0.0.1:3210';
+    </script>
     <script src="app.js"></script>
     <script src="pages/query.js"></script>
     <script src="pages/presets.js"></script>
