@@ -6,7 +6,9 @@
   "scripts": {
     "convex:dev": "convex dev",
     "convex:once": "convex dev --once",
+    "import:nba:aba:postgres": "python3 scripts/import_nba_aba_to_postgres.py",
     "import:nba": "node scripts/import_nba_to_convex.mjs",
+    "import:nba:postgres": "./scripts/import_nba_to_postgres.sh",
     "import:titanic": "node scripts/import_titanic_to_convex.mjs",
     "test": "echo \"No automated tests configured\""
   },
